@@ -49,13 +49,66 @@
 
   body {
     font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(180deg, #202123, var(--bg));
+    /* color-blocked two-tone charcoal backdrop, lit from the upper-left,
+       plus a soft studio spotlight from that same direction */
+    background:
+      radial-gradient(1300px 900px at 16% 4%, rgba(255,255,255,0.06), rgba(255,255,255,0) 58%),
+      linear-gradient(122deg,
+        #2a2c30 0%,
+        #24262a 40%,
+        #202226 52%,
+        #191a1d 100%);
+    background-attachment: fixed;
     color: var(--text);
     min-height: 100vh;
     padding: 48px 24px 80px;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 1080px; margin: 0 auto; }
+
+  /* Decorative scene: polished ball-bearings floating in the studio.
+     Sits behind the grid; never interactive, hidden from AT. */
+  .scene {
+    position: fixed; inset: 0; z-index: 0;
+    overflow: hidden; pointer-events: none;
+    transform: rotate(-2deg); transform-origin: center;
+  }
+  .ball {
+    position: absolute; border-radius: 50%;
+    /* chrome sphere: sharp small specular (upper-left), dark reflective
+       falloff, and a hint of horizon/bounce reflection lower-right */
+    background:
+      radial-gradient(circle at 66% 84%, rgba(150,162,176,0.5) 0%, rgba(150,162,176,0) 34%),
+      radial-gradient(circle at 30% 26%, #ffffff 0%, #ffffff 4%, rgba(255,255,255,0) 13%),
+      radial-gradient(circle at 36% 32%, #d6dae0 0%, #9ba1a9 20%, #5d626b 46%, #303439 71%, #131417 100%);
+    box-shadow:
+      inset -8px -11px 20px rgba(0,0,0,0.55),
+      inset 6px 7px 12px rgba(255,255,255,0.18),
+      0 18px 30px rgba(0,0,0,0.4);
+  }
+  /* crisp elliptical contact shadow, offset down-right to match the light */
+  .ball::after {
+    content: ""; position: absolute; left: 52%; bottom: -15%;
+    transform: translateX(-50%);
+    width: 82%; height: 18%; border-radius: 50%;
+    background: radial-gradient(ellipse at 50% 50%,
+      rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 42%, rgba(0,0,0,0) 72%);
+    filter: blur(2.5px);
+  }
+  /* one amber-anodized bearing to tie in the hardware accent */
+  .ball.amber {
+    background:
+      radial-gradient(circle at 66% 84%, rgba(255,214,138,0.4) 0%, rgba(255,214,138,0) 34%),
+      radial-gradient(circle at 30% 26%, #ffffff 0%, #fff6e2 4%, rgba(255,255,255,0) 14%),
+      radial-gradient(circle at 36% 32%, #ffd98a 0%, #f4a300 30%, #9a6600 62%, #3a2600 100%);
+  }
+  .b1 { width: 158px; height: 158px; top: 58px;  left: -44px; }
+  .b2 { width: 84px;  height: 84px;  top: 22px;  right: 46px; }
+  .b3 { width: 182px; height: 182px; bottom: -46px; right: -42px; }
+  .b4 { width: 72px;  height: 72px;  bottom: 92px;  left: 34px; }
+  .b5 { width: 120px; height: 120px; top: 47%;  left: -48px; }
+  .b6 { width: 60px;  height: 60px;  top: 31%;  right: 24px; }
+
+  .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; }
 
   .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
   .back-link {
@@ -73,23 +126,39 @@
     position: relative;
     background:
       var(--brushed),
-      linear-gradient(180deg, var(--metal-1), var(--metal-2));
+      linear-gradient(160deg, #40434a, var(--metal-1) 40%, var(--metal-2));
     border: 1px solid var(--border);
     border-top-color: var(--metal-hi);
+    border-left-color: #63676d;
     border-radius: var(--radius-lg);
+    /* machined solid: hard top/left edge highlights, a crisp near-edge
+       bezel line, a tight contact shadow, then the deep ambient shadow —
+       all lit consistently from the upper-left */
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.22),
-      inset 0 -1px 0 rgba(0,0,0,0.4),
-      0 10px 22px rgba(0,0,0,0.5);
+      inset 0 1px 0 rgba(255,255,255,0.30),
+      inset 1px 0 0 rgba(255,255,255,0.10),
+      inset 0 -1px 0 rgba(0,0,0,0.55),
+      inset -1px 0 0 rgba(0,0,0,0.3),
+      inset 0 0 0 1px rgba(0,0,0,0.22),
+      0 2px 3px rgba(0,0,0,0.45),
+      0 20px 40px rgba(0,0,0,0.55);
     padding: 28px;
   }
-  /* hard specular band across the top of each panel */
+  /* hard specular band across the top of each panel, brightest upper-left */
   .card::before {
-    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 42%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.14), transparent);
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 44%;
+    background: linear-gradient(155deg,
+      rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.09) 30%, transparent 100%);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0; pointer-events: none;
   }
-  .card > * { position: relative; }
+  /* hard bright top-edge highlight line — metal catches light sharply */
+  .card::after {
+    content: ""; position: absolute; left: 8px; right: 8px; top: 0; height: 1px;
+    background: linear-gradient(90deg,
+      rgba(255,255,255,0) 0%, rgba(255,255,255,0.55) 22%, rgba(255,255,255,0.4) 60%, rgba(255,255,255,0) 100%);
+    border-radius: 1px; pointer-events: none; z-index: 2;
+  }
+  .card > * { position: relative; z-index: 1; }
 
   /* Greeting */
   .greeting { grid-column: span 8; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
@@ -102,9 +171,15 @@
     border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
     color: var(--text); font-weight: 800;
     background:
+      radial-gradient(circle at 30% 24%, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0) 13%),
       var(--brushed),
-      radial-gradient(circle at 38% 30%, #6a6e74, #33363b 70%);
-    box-shadow: inset 0 2px 3px rgba(255,255,255,0.35), inset 0 -3px 6px rgba(0,0,0,0.6), 0 6px 14px rgba(0,0,0,0.5);
+      radial-gradient(circle at 36% 30%, #7c8087 0%, #55585e 42%, #34373c 74%);
+    box-shadow:
+      inset 3px 3px 5px rgba(255,255,255,0.22),
+      inset 0 2px 2px rgba(255,255,255,0.4),
+      inset -4px -5px 10px rgba(0,0,0,0.62),
+      0 9px 18px rgba(0,0,0,0.55),
+      0 2px 4px rgba(0,0,0,0.5);
     position: relative;
   }
   .orb::after {
@@ -126,14 +201,25 @@
   .mood { grid-column: span 12; }
   .mood-row { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
   .mood-btn {
-    flex: 1; min-width: 88px; min-height: 44px;
-    background: var(--brushed), linear-gradient(180deg, #45484d, #2c2f33);
-    border: 1px solid #26282b; border-top-color: var(--metal-hi);
+    flex: 1; min-width: 88px; min-height: 44px; position: relative;
+    background: var(--brushed), linear-gradient(160deg, #4d5056, #45484d 45%, #2b2e32);
+    border: 1px solid #26282b; border-top-color: var(--metal-hi); border-left-color: #4c4f55;
     border-radius: var(--radius-md);
     padding: 16px 12px; font-size: 26px; cursor: pointer;
-    box-shadow: inset 0 2px 0 rgba(255,255,255,0.18), inset 0 -3px 5px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.4);
+    box-shadow:
+      inset 0 2px 0 rgba(255,255,255,0.26),
+      inset 1px 0 0 rgba(255,255,255,0.08),
+      inset 0 -3px 6px rgba(0,0,0,0.55),
+      0 3px 5px rgba(0,0,0,0.4),
+      0 8px 16px rgba(0,0,0,0.4);
     transition: transform 0.12s ease, box-shadow 0.15s ease;
     display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--text);
+  }
+  /* hard sharp key-cap highlight, upper-left */
+  .mood-btn::before {
+    content: ""; position: absolute; left: 6px; right: 6px; top: 0; height: 1px;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.5) 40%, rgba(255,255,255,0));
+    pointer-events: none;
   }
   .mood-btn .label { font-size: 12px; font-weight: 700; color: var(--muted); }
   .mood-btn:hover { transform: translateY(-1px); }
@@ -144,6 +230,7 @@
     box-shadow: inset 0 3px 7px rgba(0,0,0,0.6), 0 0 0 1px rgba(244,163,0,0.5);
     transform: translateY(1px);
   }
+  .mood-btn.active::before { opacity: 0; }
   .mood-btn.active .label { color: var(--amber); }
 
   /* Habits — machined push-keys */
@@ -156,8 +243,14 @@
     width: 44px; height: 44px; border-radius: 8px;
     border: 1px solid #26282b; border-top-color: #55585d; padding: 0; margin: 0; font: inherit; cursor: pointer;
     -webkit-tap-highlight-color: transparent;
-    background: var(--brushed), linear-gradient(180deg, #40434880, #2b2e32);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -2px 4px rgba(0,0,0,0.5);
+    background:
+      radial-gradient(circle at 30% 24%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 32%),
+      var(--brushed), linear-gradient(160deg, #4a4d53, #3a3d42 45%, #2b2e32);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.22),
+      inset 1px 0 0 rgba(255,255,255,0.06),
+      inset 0 -2px 4px rgba(0,0,0,0.55),
+      0 2px 4px rgba(0,0,0,0.35);
     position: relative; transition: box-shadow 0.12s ease, transform 0.1s ease;
   }
   .dot::after {
@@ -193,9 +286,15 @@
   .progress-fill::after {
     content: ""; position: absolute; right: -7px; top: 50%; transform: translateY(-50%);
     width: 14px; height: 24px; border-radius: 4px;
-    background: var(--brushed), linear-gradient(180deg, #6a6e74, #303338);
-    border: 1px solid #26282b; border-top-color: var(--metal-hi);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 2px 5px rgba(0,0,0,0.6);
+    background:
+      radial-gradient(circle at 32% 22%, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0) 34%),
+      var(--brushed), linear-gradient(160deg, #7c8087, #55585e 45%, #2c2f33);
+    border: 1px solid #26282b; border-top-color: var(--metal-hi); border-left-color: #4c4f55;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.5),
+      inset -1px -1px 2px rgba(0,0,0,0.5),
+      0 1px 2px rgba(0,0,0,0.6),
+      0 4px 7px rgba(0,0,0,0.5);
   }
 
   /* Focus */
@@ -226,6 +325,14 @@
 </style>
 </head>
 <body>
+  <div class="scene" aria-hidden="true">
+    <div class="ball b1"></div>
+    <div class="ball amber b2"></div>
+    <div class="ball b3"></div>
+    <div class="ball b4"></div>
+    <div class="ball b5"></div>
+    <div class="ball b6"></div>
+  </div>
   <div class="wrap">
     <div class="top-nav">
       <a class="back-link" href="index.html">&larr; All 3D Dashboard designs</a>
