@@ -1,6 +1,6 @@
 # BLOOM
 
-A small gallery of beautiful, single-file HTML/CSS dashboard aesthetics — no build step, no frameworks, no dependencies. Pick a style, open the file, and it works fully offline (aside from loading the Google Fonts stylesheet, which falls back gracefully to system fonts).
+A small gallery of beautiful, single-file HTML/CSS dashboard aesthetics — no build step, no frameworks, no dependencies. Pick a style, open the file, and it works fully offline — Inter is self-hosted (see `fonts/`), with a system-font fallback stack if it's ever unavailable.
 
 Open `index.html` to browse available dashboards.
 
