@@ -99,6 +99,12 @@
     background: linear-gradient(145deg, var(--gold), var(--coral));
     box-shadow: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
   }
+  .preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+  }
   .tile h2 { font-size: 18px; margin: 0; font-weight: 700; }
   .tile p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.5; }
   .tile .tag {
@@ -131,28 +137,65 @@
       <p>A small gallery of single-file, dependency-free HTML/CSS dashboards. Explore a style, open it, keep it — everything runs fully offline.</p>
     </header>
 
-    <div class="grid">
-      <a class="tile" href="dashboards/3d-dashboard.html">
-        <div class="preview"><div class="orb"></div></div>
-        <span class="tag">Neumorphic</span>
-        <h2>3D Dashboard</h2>
-        <p>Soft, pillowy, luxury life-OS. Warm gradients, raised cards, circular orbs, inset progress bars.</p>
-      </a>
-
-      <div class="tile soon">
-        <div class="preview"></div>
-        <span class="tag">Coming soon</span>
-        <h2>Glassmorphic</h2>
-        <p>Frosted, translucent layers over a soft gradient backdrop.</p>
-      </div>
-
-      <div class="tile soon">
-        <div class="preview"></div>
-        <span class="tag">Coming soon</span>
-        <h2>Editorial Minimal</h2>
-        <p>Typographic, high-contrast, print-inspired layout.</p>
-      </div>
-    </div>
+    <div class="grid" id="gallery"></div>
   </div>
+
+  <script>
+    // Add an entry here to register a new dashboard style in the gallery.
+    // See README.md ("Adding a new dashboard style") for the full convention.
+    const DASHBOARDS = [
+      {
+        title: "3D Dashboard",
+        tag: "Neumorphic",
+        desc: "Soft, pillowy, luxury life-OS. Warm gradients, raised cards, circular orbs, inset progress bars.",
+        href: "dashboards/3d-dashboard.html",
+        status: "live",
+        preview: "previews/3d-dashboard.png",
+      },
+      {
+        title: "Glassmorphic",
+        tag: "Coming soon",
+        desc: "Frosted, translucent layers over a soft gradient backdrop.",
+        href: null,
+        status: "soon",
+        preview: null,
+      },
+      {
+        title: "Editorial Minimal",
+        tag: "Coming soon",
+        desc: "Typographic, high-contrast, print-inspired layout.",
+        href: null,
+        status: "soon",
+        preview: null,
+      },
+    ];
+
+    function renderPreview(dashboard) {
+      if (dashboard.preview) {
+        return `<div class="preview"><img src="${dashboard.preview}" alt="${dashboard.title} preview" loading="lazy"></div>`;
+      }
+      if (dashboard.status === "live") {
+        return `<div class="preview"><div class="orb"></div></div>`;
+      }
+      return `<div class="preview"></div>`;
+    }
+
+    function renderTile(dashboard) {
+      const preview = renderPreview(dashboard);
+      const body = `
+        ${preview}
+        <span class="tag">${dashboard.tag}</span>
+        <h2>${dashboard.title}</h2>
+        <p>${dashboard.desc}</p>
+      `;
+
+      if (dashboard.status === "live") {
+        return `<a class="tile" href="${dashboard.href}">${body}</a>`;
+      }
+      return `<div class="tile soon">${body}</div>`;
+    }
+
+    document.getElementById("gallery").innerHTML = DASHBOARDS.map(renderTile).join("\n");
+  </script>
 </body>
 </html>
