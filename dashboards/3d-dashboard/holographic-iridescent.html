@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holographic Iridescent — Your Personal Life OS</title>
+<meta name="description" content="A holo-sticker, soap-film dashboard aesthetic — conic rainbow sheens and chromatic depth instead of light-and-shadow. A single dependency-free HTML/CSS file from the BLOOM gallery.">
+<meta property="og:title" content="Holographic Iridescent — Your Personal Life OS">
+<meta property="og:description" content="An iridescent holo-sticker life OS with mood check-in, shimmering habit streaks, and goal progress, built as a single dependency-free HTML/CSS file.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23c9b8ff%22%2F%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%23ffb8e0%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23b8f2ff%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2228%22%20fill%3D%22url%28%23g%29%22%2F%3E%3C%2Fsvg%3E">
+<style>
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-normal.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Inter';
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-italic.woff2') format('woff2');
+  }
+  :root {
+    --bg-1: #f5f0ff;
+    --card: #fbf8ff;
+    --card-2: #f3eefc;
+    --text: #2a2438;
+    --muted: #5c5470;
+    --accent: #6b3fd4;
+    --border: #8f72cf;
+    --holo: conic-gradient(from 210deg, #ffb8e0, #c9b8ff, #b8f2ff, #d6ffe6, #fff2b8, #ffb8e0);
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100%; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background:
+      radial-gradient(circle at 12% 8%, #ffe4f4 0%, transparent 40%),
+      radial-gradient(circle at 88% 4%, #dce8ff 0%, transparent 42%),
+      radial-gradient(circle at 70% 100%, #d8fff0 0%, transparent 45%),
+      var(--bg-1);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 48px 24px 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+
+  .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+  .back-link {
+    text-decoration: none; color: var(--muted);
+    font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
+    display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s ease;
+  }
+  .back-link:hover { color: var(--accent); }
+  .back-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+  .brand {
+    font-weight: 800; font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase;
+    background: var(--holo); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: saturate(1.4) brightness(0.85);
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 26px; }
+
+  .card {
+    position: relative;
+    background: linear-gradient(180deg, var(--card), var(--card-2));
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 26px rgba(120,90,190,0.18), inset 0 1px 0 rgba(255,255,255,0.9);
+    padding: 30px; overflow: hidden;
+  }
+  /* Holo soap-film sheen sweeping across each card */
+  .card::before {
+    content: ""; position: absolute; inset: -40%;
+    background: var(--holo);
+    mix-blend-mode: overlay; opacity: 0.45; pointer-events: none;
+    filter: blur(14px);
+  }
+  .card > * { position: relative; z-index: 1; }
+
+  /* Greeting */
+  .greeting { grid-column: span 8; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .eyebrow { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 8px; }
+  .greeting-text h1 { font-size: 33px; font-weight: 800; margin: 0 0 6px; line-height: 1.2; }
+  .greeting-text p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  .orb {
+    border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    color: #2a2438; font-weight: 800;
+    background: var(--holo);
+    box-shadow: 0 8px 20px rgba(120,90,190,0.35), inset 0 0 18px rgba(255,255,255,0.55);
+    position: relative;
+  }
+  .orb::after {
+    content: ""; position: absolute; top: 14%; left: 20%; width: 34%; height: 24%;
+    background: rgba(255,255,255,0.8); border-radius: 50%; filter: blur(3px);
+  }
+  .orb-lg { width: 92px; height: 92px; font-size: 34px; }
+  .orb-md { width: 66px; height: 66px; font-size: 24px; }
+
+  .date-orb { grid-column: span 4; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; }
+  .date-orb .day-num {
+    font-size: 46px; font-weight: 800; line-height: 1;
+    background: var(--holo); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: saturate(1.5) brightness(0.8);
+  }
+  .date-orb .day-name { font-size: 12px; color: var(--muted); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+
+  .section-title { font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; }
+
+  /* Mood */
+  .mood { grid-column: span 12; }
+  .mood-row { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .mood-btn {
+    flex: 1; min-width: 88px; min-height: 44px;
+    background: linear-gradient(180deg, #ffffff, #f4eefc);
+    border: 1.5px solid #d9cbf2; border-radius: var(--radius-md);
+    padding: 16px 12px; font-size: 26px; cursor: pointer;
+    box-shadow: 0 6px 14px rgba(120,90,190,0.14);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--text);
+    position: relative; overflow: hidden;
+  }
+  .mood-btn .label { font-size: 12px; font-weight: 700; color: var(--muted); }
+  .mood-btn:hover { transform: translateY(-2px); }
+  .mood-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .mood-btn.active {
+    border-color: transparent;
+    background: var(--holo);
+    box-shadow: 0 8px 18px rgba(120,90,190,0.3), inset 0 0 12px rgba(255,255,255,0.5);
+  }
+  .mood-btn.active .label { color: #2a2438; }
+
+  /* Habits — shimmering streak cells, each filled cell a different hue */
+  .habits { grid-column: span 7; }
+  .habit-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; row-gap: 10px; padding: 12px 0; border-bottom: 1px solid rgba(143,114,207,0.2); }
+  .habit-row:last-child { border-bottom: none; }
+  .habit-name { font-size: 13px; font-weight: 700; width: 100px; flex-shrink: 0; }
+  .dot-grid { display: flex; flex-wrap: wrap; gap: 8px; flex-shrink: 0; max-width: 100%; }
+  .dot {
+    width: 44px; height: 44px; border-radius: 12px;
+    border: 1.5px solid #d9cbf2; padding: 0; margin: 0; font: inherit; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    background: #f2ecfb; box-shadow: inset 0 2px 5px rgba(120,90,190,0.14);
+    transition: transform 0.12s ease;
+  }
+  .dot.filled {
+    border-color: transparent;
+    background: var(--holo); background-size: 220% 220%;
+    box-shadow: 0 4px 10px rgba(120,90,190,0.28), inset 0 0 8px rgba(255,255,255,0.55);
+  }
+  .dot.filled:nth-of-type(1) { background-position: 0% 0%; }
+  .dot.filled:nth-of-type(2) { background-position: 20% 30%; }
+  .dot.filled:nth-of-type(3) { background-position: 40% 60%; }
+  .dot.filled:nth-of-type(4) { background-position: 60% 20%; }
+  .dot.filled:nth-of-type(5) { background-position: 80% 50%; }
+  .dot.filled:nth-of-type(6) { background-position: 100% 80%; }
+  .dot.filled:nth-of-type(7) { background-position: 50% 100%; }
+  .dot:hover { transform: translateY(-1px); }
+  .dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Goals */
+  .goals { grid-column: span 5; }
+  .goal-item { margin-bottom: 20px; }
+  .goal-item:last-child { margin-bottom: 0; }
+  .goal-label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+  .goal-label .pct { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .progress-track {
+    height: 16px; border-radius: 10px; background: #eee6fa;
+    box-shadow: inset 0 2px 6px rgba(120,90,190,0.2); border: 1px solid #d9cbf2;
+    overflow: hidden; padding: 3px; cursor: pointer; touch-action: none;
+  }
+  .progress-track:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .progress-fill { height: 100%; border-radius: 8px; background: var(--holo); background-size: 200% 100%; box-shadow: inset 0 0 8px rgba(255,255,255,0.5); }
+
+  /* Focus */
+  .focus { grid-column: span 7; display: flex; align-items: center; gap: 22px; }
+  .focus-copy h3 { margin: 0 0 8px; font-size: 19px; font-weight: 800; }
+  .focus-copy p { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* Quote */
+  .quote { grid-column: span 5; display: flex; flex-direction: column; justify-content: center; text-align: center; }
+  .quote blockquote { margin: 0 0 14px; font-size: 16px; font-style: italic; font-weight: 500; line-height: 1.5; }
+  .quote cite { font-style: normal; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+
+  @media (max-width: 860px) {
+    .greeting, .date-orb, .habits, .goals, .focus, .quote, .mood { grid-column: span 12; }
+    .card { padding: 24px; }
+  }
+  @media (max-width: 480px) {
+    .habit-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .habit-name { width: auto; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.001ms !important;
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top-nav">
+      <a class="back-link" href="index.html">&larr; All 3D Dashboard designs</a>
+      <div class="brand">Holographic Iridescent</div>
+    </div>
+
+    <div class="grid">
+      <section class="card greeting">
+        <div class="greeting-text">
+          <div class="eyebrow" id="greeting-eyebrow">Good Morning</div>
+          <h1 id="greeting-name">Welcome back, Ellery</h1>
+          <p>A bright, shimmering look at your day.</p>
+        </div>
+        <div class="orb orb-lg">E</div>
+      </section>
+
+      <section class="card date-orb">
+        <div class="day-num" id="day-num">04</div>
+        <div class="day-name" id="day-name">Saturday</div>
+      </section>
+
+      <section class="card mood">
+        <p class="section-title">Mood check-in</p>
+        <div class="mood-row" id="mood-row">
+          <button class="mood-btn" data-mood="low" aria-pressed="false"><span>😔</span><span class="label">Low</span></button>
+          <button class="mood-btn" data-mood="flat" aria-pressed="false"><span>😐</span><span class="label">Flat</span></button>
+          <button class="mood-btn active" data-mood="okay" aria-pressed="true"><span>🙂</span><span class="label">Okay</span></button>
+          <button class="mood-btn" data-mood="good" aria-pressed="false"><span>😄</span><span class="label">Good</span></button>
+          <button class="mood-btn" data-mood="great" aria-pressed="false"><span>🤩</span><span class="label">Great</span></button>
+        </div>
+      </section>
+
+      <section class="card habits">
+        <p class="section-title">Habit streaks</p>
+        <div class="habit-row" data-habit="Meditate">
+          <span class="habit-name">Meditate</span>
+          <div class="dot-grid">
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Meditate, day 1"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Meditate, day 2"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Meditate, day 3"></button>
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Meditate, day 4"></button><button class="dot" type="button" aria-pressed="false" aria-label="Meditate, day 5"></button><button class="dot" type="button" aria-pressed="false" aria-label="Meditate, day 6"></button><button class="dot" type="button" aria-pressed="false" aria-label="Meditate, day 7"></button>
+          </div>
+        </div>
+        <div class="habit-row" data-habit="Read">
+          <span class="habit-name">Read</span>
+          <div class="dot-grid">
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Read, day 1"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Read, day 2"></button><button class="dot" type="button" aria-pressed="false" aria-label="Read, day 3"></button>
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Read, day 4"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Read, day 5"></button><button class="dot" type="button" aria-pressed="false" aria-label="Read, day 6"></button><button class="dot" type="button" aria-pressed="false" aria-label="Read, day 7"></button>
+          </div>
+        </div>
+        <div class="habit-row" data-habit="Move">
+          <span class="habit-name">Move</span>
+          <div class="dot-grid">
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Move, day 1"></button><button class="dot" type="button" aria-pressed="false" aria-label="Move, day 2"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Move, day 3"></button>
+            <button class="dot" type="button" aria-pressed="false" aria-label="Move, day 4"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Move, day 5"></button><button class="dot" type="button" aria-pressed="false" aria-label="Move, day 6"></button><button class="dot" type="button" aria-pressed="false" aria-label="Move, day 7"></button>
+          </div>
+        </div>
+        <div class="habit-row" data-habit="Hydrate">
+          <span class="habit-name">Hydrate</span>
+          <div class="dot-grid">
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Hydrate, day 1"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Hydrate, day 2"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Hydrate, day 3"></button>
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Hydrate, day 4"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Hydrate, day 5"></button><button class="dot" type="button" aria-pressed="false" aria-label="Hydrate, day 6"></button><button class="dot" type="button" aria-pressed="false" aria-label="Hydrate, day 7"></button>
+          </div>
+        </div>
+        <div class="habit-row" data-habit="Journal">
+          <span class="habit-name">Journal</span>
+          <div class="dot-grid">
+            <button class="dot" type="button" aria-pressed="false" aria-label="Journal, day 1"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Journal, day 2"></button><button class="dot" type="button" aria-pressed="false" aria-label="Journal, day 3"></button>
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Journal, day 4"></button><button class="dot" type="button" aria-pressed="false" aria-label="Journal, day 5"></button><button class="dot" type="button" aria-pressed="false" aria-label="Journal, day 6"></button><button class="dot" type="button" aria-pressed="false" aria-label="Journal, day 7"></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card goals">
+        <p class="section-title">Goal progress</p>
+        <div class="goal-item" data-goal="Read 20 books">
+          <div class="goal-label"><span>Read 20 books</span><span class="pct">65%</span></div>
+          <div class="progress-track" role="slider" tabindex="0" aria-label="Read 20 books progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="65"><div class="progress-fill" style="width:65%"></div></div>
+        </div>
+        <div class="goal-item" data-goal="Save $10,000">
+          <div class="goal-label"><span>Save $10,000</span><span class="pct">40%</span></div>
+          <div class="progress-track" role="slider" tabindex="0" aria-label="Save $10,000 progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40"><div class="progress-fill" style="width:40%"></div></div>
+        </div>
+        <div class="goal-item" data-goal="Run 500 miles">
+          <div class="goal-label"><span>Run 500 miles</span><span class="pct">82%</span></div>
+          <div class="progress-track" role="slider" tabindex="0" aria-label="Run 500 miles progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="82"><div class="progress-fill" style="width:82%"></div></div>
+        </div>
+      </section>
+
+      <section class="card focus">
+        <div class="orb orb-md">✦</div>
+        <div class="focus-copy">
+          <h3>This week's focus</h3>
+          <p>Protect your mornings. Block 90 minutes before 9am for deep, uninterrupted work — no notifications, no meetings.</p>
+        </div>
+      </section>
+
+      <section class="card quote">
+        <blockquote id="quote-text">"Slow is smooth, and smooth is fast."</blockquote>
+        <cite id="quote-author">— Unknown</cite>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const now = new Date();
+    const hour = now.getHours();
+    document.getElementById('greeting-eyebrow').textContent = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+    const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    document.getElementById('day-num').textContent = String(now.getDate()).padStart(2, '0');
+    document.getElementById('day-name').textContent = dayNames[now.getDay()];
+
+    document.getElementById('mood-row').addEventListener('click', (e) => {
+      const btn = e.target.closest('.mood-btn');
+      if (!btn) return;
+      document.querySelectorAll('.mood-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+    });
+
+    const HABITS_KEY = 'bloom-3d-dashboard-holographic-iridescent-habits';
+    function readHabitsFromDom() {
+      const state = {};
+      document.querySelectorAll('.habit-row').forEach((row) => {
+        state[row.dataset.habit] = Array.from(row.querySelectorAll('.dot')).map((d) => d.classList.contains('filled'));
+      });
+      return state;
+    }
+    function applyHabitState(state) {
+      document.querySelectorAll('.habit-row').forEach((row) => {
+        const days = state[row.dataset.habit];
+        if (!Array.isArray(days)) return;
+        row.querySelectorAll('.dot').forEach((dot, i) => {
+          const filled = !!days[i];
+          dot.classList.toggle('filled', filled);
+          dot.setAttribute('aria-pressed', String(filled));
+        });
+      });
+    }
+    function saveHabitState() { try { localStorage.setItem(HABITS_KEY, JSON.stringify(readHabitsFromDom())); } catch (err) {} }
+    (function initHabits() {
+      try { const raw = localStorage.getItem(HABITS_KEY); if (!raw) return; const parsed = JSON.parse(raw); if (parsed && typeof parsed === 'object') applyHabitState(parsed); } catch (err) {}
+    })();
+    document.querySelectorAll('.habit-row .dot-grid').forEach((grid) => {
+      grid.addEventListener('click', (e) => {
+        const dot = e.target.closest('.dot');
+        if (!dot) return;
+        const filled = !dot.classList.contains('filled');
+        dot.classList.toggle('filled', filled);
+        dot.setAttribute('aria-pressed', String(filled));
+        saveHabitState();
+      });
+    });
+
+    const GOALS_KEY = 'bloom-3d-dashboard-holographic-iridescent-goals';
+    function setGoalPercent(item, pct, opts) {
+      const persist = !opts || opts.persist !== false;
+      const clamped = Math.max(0, Math.min(100, Math.round(pct)));
+      item.querySelector('.progress-fill').style.width = clamped + '%';
+      item.querySelector('.pct').textContent = clamped + '%';
+      item.querySelector('.progress-track').setAttribute('aria-valuenow', String(clamped));
+      if (persist) saveGoalState();
+    }
+    function readGoalsFromDom() {
+      const state = {};
+      document.querySelectorAll('.goal-item').forEach((item) => {
+        state[item.dataset.goal] = Number(item.querySelector('.progress-track').getAttribute('aria-valuenow')) || 0;
+      });
+      return state;
+    }
+    function saveGoalState() { try { localStorage.setItem(GOALS_KEY, JSON.stringify(readGoalsFromDom())); } catch (err) {} }
+    (function initGoals() {
+      try {
+        const raw = localStorage.getItem(GOALS_KEY); if (!raw) return;
+        const parsed = JSON.parse(raw); if (!parsed || typeof parsed !== 'object') return;
+        document.querySelectorAll('.goal-item').forEach((item) => {
+          const v = parsed[item.dataset.goal];
+          if (typeof v === 'number') setGoalPercent(item, v, { persist: false });
+        });
+      } catch (err) {}
+    })();
+    function pctFromClientX(track, clientX) {
+      const rect = track.getBoundingClientRect();
+      if (!rect.width) return 0;
+      return ((clientX - rect.left) / rect.width) * 100;
+    }
+    document.querySelectorAll('.goal-item').forEach((item) => {
+      const track = item.querySelector('.progress-track');
+      let dragging = false;
+      const updateFromPointer = (e) => setGoalPercent(item, pctFromClientX(track, e.clientX));
+      track.addEventListener('pointerdown', (e) => { dragging = true; track.setPointerCapture(e.pointerId); updateFromPointer(e); });
+      track.addEventListener('pointermove', (e) => { if (dragging) updateFromPointer(e); });
+      track.addEventListener('pointerup', () => { dragging = false; });
+      track.addEventListener('pointercancel', () => { dragging = false; });
+      track.addEventListener('keydown', (e) => {
+        const current = Number(track.getAttribute('aria-valuenow')) || 0;
+        let next = null;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = current + 5;
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = current - 5;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = 100;
+        if (next === null) return;
+        e.preventDefault();
+        setGoalPercent(item, next);
+      });
+    });
+
+    const quotes = [
+      ['"Slow is smooth, and smooth is fast."', '— Unknown'],
+      ['"What you do every day matters more than what you do once in a while."', '— Gretchen Rubin'],
+      ['"Discipline is choosing between what you want now and what you want most."', '— Abraham Lincoln'],
+      ['"Small daily improvements are the key to staggering long-term results."', '— James Clear']
+    ];
+    const [q, a] = quotes[Math.floor(Math.random() * quotes.length) % quotes.length];
+    document.getElementById('quote-text').textContent = q;
+    document.getElementById('quote-author').textContent = a;
+  </script>
+</body>
+</html>

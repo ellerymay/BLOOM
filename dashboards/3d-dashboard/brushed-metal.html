@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brushed Metal Console — Your Personal Life OS</title>
+<meta name="description" content="An anodized-aluminum, hi-fi hardware dashboard aesthetic — fine brushed texture, hard specular highlight bands, and physical rocker toggles. A single dependency-free HTML/CSS file from the BLOOM gallery.">
+<meta property="og:title" content="Brushed Metal Console — Your Personal Life OS">
+<meta property="og:description" content="A brushed-aluminum hi-fi life OS with mood rockers, machined habit keys, and metered goal progress, built as a single dependency-free HTML/CSS file.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%233a3d42%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2213%22%20fill%3D%22%23f4a300%22%2F%3E%3C%2Fsvg%3E">
+<style>
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-normal.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Inter';
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-italic.woff2') format('woff2');
+  }
+  :root {
+    --bg: #1a1b1d;
+    --metal-1: #3a3d42;
+    --metal-2: #303338;
+    --metal-hi: #5a5e64;
+    --border: #6c7075;
+    --text: #e6e7e9;
+    --muted: #b3b7bc;
+    --amber: #f4a300;
+    --radius-lg: 14px;
+    --radius-md: 10px;
+    --radius-sm: 7px;
+    /* fine brushed-aluminium vertical striations */
+    --brushed: repeating-linear-gradient(90deg,
+      rgba(255,255,255,0.045) 0px,
+      rgba(255,255,255,0.045) 1px,
+      rgba(0,0,0,0.05) 1px,
+      rgba(0,0,0,0.05) 2px);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100%; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(180deg, #202123, var(--bg));
+    color: var(--text);
+    min-height: 100vh;
+    padding: 48px 24px 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+
+  .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+  .back-link {
+    text-decoration: none; color: var(--muted);
+    font-size: 13px; font-weight: 600; letter-spacing: 0.03em;
+    display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s ease;
+  }
+  .back-link:hover { color: var(--amber); }
+  .back-link:focus-visible { outline: 2px solid var(--amber); outline-offset: 4px; border-radius: 4px; }
+  .brand { font-weight: 800; font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+
+  .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 22px; }
+
+  .card {
+    position: relative;
+    background:
+      var(--brushed),
+      linear-gradient(180deg, var(--metal-1), var(--metal-2));
+    border: 1px solid var(--border);
+    border-top-color: var(--metal-hi);
+    border-radius: var(--radius-lg);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.22),
+      inset 0 -1px 0 rgba(0,0,0,0.4),
+      0 10px 22px rgba(0,0,0,0.5);
+    padding: 28px;
+  }
+  /* hard specular band across the top of each panel */
+  .card::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 42%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.14), transparent);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0; pointer-events: none;
+  }
+  .card > * { position: relative; }
+
+  /* Greeting */
+  .greeting { grid-column: span 8; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .eyebrow { font-size: 12px; font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 8px; }
+  .greeting-text h1 { font-size: 32px; font-weight: 800; margin: 0 0 6px; line-height: 1.2; }
+  .greeting-text p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  /* Knob-face avatar */
+  .orb {
+    border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    color: var(--text); font-weight: 800;
+    background:
+      var(--brushed),
+      radial-gradient(circle at 38% 30%, #6a6e74, #33363b 70%);
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.35), inset 0 -3px 6px rgba(0,0,0,0.6), 0 6px 14px rgba(0,0,0,0.5);
+    position: relative;
+  }
+  .orb::after {
+    content: ""; position: absolute; width: 4px; top: 10%; bottom: 55%; left: 50%;
+    transform: translateX(-50%); background: var(--amber); border-radius: 2px;
+    box-shadow: 0 0 6px rgba(244,163,0,0.7);
+  }
+  .orb-lg { width: 90px; height: 90px; font-size: 0; }
+  .orb-md { width: 64px; height: 64px; font-size: 22px; }
+  .orb-md::after { display: none; }
+
+  .date-orb { grid-column: span 4; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; }
+  .date-orb .day-num { font-size: 44px; font-weight: 800; line-height: 1; color: var(--amber); font-variant-numeric: tabular-nums; }
+  .date-orb .day-name { font-size: 12px; color: var(--muted); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+
+  .section-title { font-size: 11px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; }
+
+  /* Mood — physical rocker toggles */
+  .mood { grid-column: span 12; }
+  .mood-row { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .mood-btn {
+    flex: 1; min-width: 88px; min-height: 44px;
+    background: var(--brushed), linear-gradient(180deg, #45484d, #2c2f33);
+    border: 1px solid #26282b; border-top-color: var(--metal-hi);
+    border-radius: var(--radius-md);
+    padding: 16px 12px; font-size: 26px; cursor: pointer;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.18), inset 0 -3px 5px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.4);
+    transition: transform 0.12s ease, box-shadow 0.15s ease;
+    display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--text);
+  }
+  .mood-btn .label { font-size: 12px; font-weight: 700; color: var(--muted); }
+  .mood-btn:hover { transform: translateY(-1px); }
+  .mood-btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  /* rocked-in (pressed) look + amber status */
+  .mood-btn.active {
+    background: var(--brushed), linear-gradient(180deg, #2a2d31, #383b40);
+    box-shadow: inset 0 3px 7px rgba(0,0,0,0.6), 0 0 0 1px rgba(244,163,0,0.5);
+    transform: translateY(1px);
+  }
+  .mood-btn.active .label { color: var(--amber); }
+
+  /* Habits — machined push-keys */
+  .habits { grid-column: span 7; }
+  .habit-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; row-gap: 10px; padding: 12px 0; border-bottom: 1px solid rgba(108,112,117,0.35); }
+  .habit-row:last-child { border-bottom: none; }
+  .habit-name { font-size: 13px; font-weight: 700; width: 100px; flex-shrink: 0; letter-spacing: 0.03em; }
+  .dot-grid { display: flex; flex-wrap: wrap; gap: 8px; flex-shrink: 0; max-width: 100%; }
+  .dot {
+    width: 44px; height: 44px; border-radius: 8px;
+    border: 1px solid #26282b; border-top-color: #55585d; padding: 0; margin: 0; font: inherit; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    background: var(--brushed), linear-gradient(180deg, #40434880, #2b2e32);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -2px 4px rgba(0,0,0,0.5);
+    position: relative; transition: box-shadow 0.12s ease, transform 0.1s ease;
+  }
+  .dot::after {
+    content: ""; position: absolute; inset: 14px; border-radius: 3px;
+    background: #212326; box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+    transition: background 0.12s ease, box-shadow 0.12s ease;
+  }
+  .dot.filled::after {
+    background: linear-gradient(180deg, #ffc24d, var(--amber));
+    box-shadow: 0 0 8px rgba(244,163,0,0.75), inset 0 1px 1px rgba(255,255,255,0.5);
+  }
+  .dot:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+
+  /* Goals — VU-style metered channels with a machined slider handle */
+  .goals { grid-column: span 5; }
+  .goal-item { margin-bottom: 22px; }
+  .goal-item:last-child { margin-bottom: 0; }
+  .goal-label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+  .goal-label .pct { color: var(--amber); font-variant-numeric: tabular-nums; }
+  .progress-track {
+    position: relative; height: 14px; border-radius: 8px;
+    background: linear-gradient(180deg, #202225, #2b2e32);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.75), inset 0 -1px 0 rgba(255,255,255,0.08);
+    border: 1px solid #26282b;
+    cursor: pointer; touch-action: none; margin: 6px 0;
+  }
+  .progress-track:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  .progress-fill {
+    position: relative; height: 100%; border-radius: 8px;
+    background: linear-gradient(180deg, #ffc24d, var(--amber));
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.5), 0 0 8px rgba(244,163,0,0.5);
+  }
+  .progress-fill::after {
+    content: ""; position: absolute; right: -7px; top: 50%; transform: translateY(-50%);
+    width: 14px; height: 24px; border-radius: 4px;
+    background: var(--brushed), linear-gradient(180deg, #6a6e74, #303338);
+    border: 1px solid #26282b; border-top-color: var(--metal-hi);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 2px 5px rgba(0,0,0,0.6);
+  }
+
+  /* Focus */
+  .focus { grid-column: span 7; display: flex; align-items: center; gap: 22px; }
+  .focus-copy h3 { margin: 0 0 8px; font-size: 19px; font-weight: 800; }
+  .focus-copy p { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* Quote */
+  .quote { grid-column: span 5; display: flex; flex-direction: column; justify-content: center; text-align: center; }
+  .quote blockquote { margin: 0 0 14px; font-size: 16px; font-style: italic; font-weight: 500; line-height: 1.5; }
+  .quote cite { font-style: normal; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); }
+
+  @media (max-width: 860px) {
+    .greeting, .date-orb, .habits, .goals, .focus, .quote, .mood { grid-column: span 12; }
+    .card { padding: 22px; }
+  }
+  @media (max-width: 480px) {
+    .habit-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .habit-name { width: auto; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.001ms !important;
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top-nav">
+      <a class="back-link" href="index.html">&larr; All 3D Dashboard designs</a>
+      <div class="brand">Brushed Metal Console</div>
+    </div>
+
+    <div class="grid">
+      <section class="card greeting">
+        <div class="greeting-text">
+          <div class="eyebrow" id="greeting-eyebrow">Good Morning</div>
+          <h1 id="greeting-name">Welcome back, Ellery</h1>
+          <p>A precise, machined read-out of your day.</p>
+        </div>
+        <div class="orb orb-lg">E</div>
+      </section>
+
+      <section class="card date-orb">
+        <div class="day-num" id="day-num">04</div>
+        <div class="day-name" id="day-name">Saturday</div>
+      </section>
+
+      <section class="card mood">
+        <p class="section-title">Mood check-in</p>
+        <div class="mood-row" id="mood-row">
+          <button class="mood-btn" data-mood="low" aria-pressed="false"><span>😔</span><span class="label">Low</span></button>
+          <button class="mood-btn" data-mood="flat" aria-pressed="false"><span>😐</span><span class="label">Flat</span></button>
+          <button class="mood-btn active" data-mood="okay" aria-pressed="true"><span>🙂</span><span class="label">Okay</span></button>
+          <button class="mood-btn" data-mood="good" aria-pressed="false"><span>😄</span><span class="label">Good</span></button>
+          <button class="mood-btn" data-mood="great" aria-pressed="false"><span>🤩</span><span class="label">Great</span></button>
+        </div>
+      </section>
+
+      <section class="card habits">
+        <p class="section-title">Habit tracker</p>
+        <div class="habit-row" data-habit="Meditate">
+          <span class="habit-name">Meditate</span>
+          <div class="dot-grid">
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Meditate, day 1"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Meditate, day 2"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Meditate, day 3"></button>
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Meditate, day 4"></button><button class="dot" type="button" aria-pressed="false" aria-label="Meditate, day 5"></button><button class="dot" type="button" aria-pressed="false" aria-label="Meditate, day 6"></button><button class="dot" type="button" aria-pressed="false" aria-label="Meditate, day 7"></button>
+          </div>
+        </div>
+        <div class="habit-row" data-habit="Read">
+          <span class="habit-name">Read</span>
+          <div class="dot-grid">
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Read, day 1"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Read, day 2"></button><button class="dot" type="button" aria-pressed="false" aria-label="Read, day 3"></button>
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Read, day 4"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Read, day 5"></button><button class="dot" type="button" aria-pressed="false" aria-label="Read, day 6"></button><button class="dot" type="button" aria-pressed="false" aria-label="Read, day 7"></button>
+          </div>
+        </div>
+        <div class="habit-row" data-habit="Move">
+          <span class="habit-name">Move</span>
+          <div class="dot-grid">
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Move, day 1"></button><button class="dot" type="button" aria-pressed="false" aria-label="Move, day 2"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Move, day 3"></button>
+            <button class="dot" type="button" aria-pressed="false" aria-label="Move, day 4"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Move, day 5"></button><button class="dot" type="button" aria-pressed="false" aria-label="Move, day 6"></button><button class="dot" type="button" aria-pressed="false" aria-label="Move, day 7"></button>
+          </div>
+        </div>
+        <div class="habit-row" data-habit="Hydrate">
+          <span class="habit-name">Hydrate</span>
+          <div class="dot-grid">
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Hydrate, day 1"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Hydrate, day 2"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Hydrate, day 3"></button>
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Hydrate, day 4"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Hydrate, day 5"></button><button class="dot" type="button" aria-pressed="false" aria-label="Hydrate, day 6"></button><button class="dot" type="button" aria-pressed="false" aria-label="Hydrate, day 7"></button>
+          </div>
+        </div>
+        <div class="habit-row" data-habit="Journal">
+          <span class="habit-name">Journal</span>
+          <div class="dot-grid">
+            <button class="dot" type="button" aria-pressed="false" aria-label="Journal, day 1"></button><button class="dot filled" type="button" aria-pressed="true" aria-label="Journal, day 2"></button><button class="dot" type="button" aria-pressed="false" aria-label="Journal, day 3"></button>
+            <button class="dot filled" type="button" aria-pressed="true" aria-label="Journal, day 4"></button><button class="dot" type="button" aria-pressed="false" aria-label="Journal, day 5"></button><button class="dot" type="button" aria-pressed="false" aria-label="Journal, day 6"></button><button class="dot" type="button" aria-pressed="false" aria-label="Journal, day 7"></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card goals">
+        <p class="section-title">Goal progress</p>
+        <div class="goal-item" data-goal="Read 20 books">
+          <div class="goal-label"><span>Read 20 books</span><span class="pct">65%</span></div>
+          <div class="progress-track" role="slider" tabindex="0" aria-label="Read 20 books progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="65"><div class="progress-fill" style="width:65%"></div></div>
+        </div>
+        <div class="goal-item" data-goal="Save $10,000">
+          <div class="goal-label"><span>Save $10,000</span><span class="pct">40%</span></div>
+          <div class="progress-track" role="slider" tabindex="0" aria-label="Save $10,000 progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40"><div class="progress-fill" style="width:40%"></div></div>
+        </div>
+        <div class="goal-item" data-goal="Run 500 miles">
+          <div class="goal-label"><span>Run 500 miles</span><span class="pct">82%</span></div>
+          <div class="progress-track" role="slider" tabindex="0" aria-label="Run 500 miles progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="82"><div class="progress-fill" style="width:82%"></div></div>
+        </div>
+      </section>
+
+      <section class="card focus">
+        <div class="orb orb-md">✦</div>
+        <div class="focus-copy">
+          <h3>This week's focus</h3>
+          <p>Protect your mornings. Block 90 minutes before 9am for deep, uninterrupted work — no notifications, no meetings.</p>
+        </div>
+      </section>
+
+      <section class="card quote">
+        <blockquote id="quote-text">"Slow is smooth, and smooth is fast."</blockquote>
+        <cite id="quote-author">— Unknown</cite>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const now = new Date();
+    const hour = now.getHours();
+    document.getElementById('greeting-eyebrow').textContent = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+    const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    document.getElementById('day-num').textContent = String(now.getDate()).padStart(2, '0');
+    document.getElementById('day-name').textContent = dayNames[now.getDay()];
+
+    document.getElementById('mood-row').addEventListener('click', (e) => {
+      const btn = e.target.closest('.mood-btn');
+      if (!btn) return;
+      document.querySelectorAll('.mood-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+    });
+
+    const HABITS_KEY = 'bloom-3d-dashboard-brushed-metal-habits';
+    function readHabitsFromDom() {
+      const state = {};
+      document.querySelectorAll('.habit-row').forEach((row) => {
+        state[row.dataset.habit] = Array.from(row.querySelectorAll('.dot')).map((d) => d.classList.contains('filled'));
+      });
+      return state;
+    }
+    function applyHabitState(state) {
+      document.querySelectorAll('.habit-row').forEach((row) => {
+        const days = state[row.dataset.habit];
+        if (!Array.isArray(days)) return;
+        row.querySelectorAll('.dot').forEach((dot, i) => {
+          const filled = !!days[i];
+          dot.classList.toggle('filled', filled);
+          dot.setAttribute('aria-pressed', String(filled));
+        });
+      });
+    }
+    function saveHabitState() { try { localStorage.setItem(HABITS_KEY, JSON.stringify(readHabitsFromDom())); } catch (err) {} }
+    (function initHabits() {
+      try { const raw = localStorage.getItem(HABITS_KEY); if (!raw) return; const parsed = JSON.parse(raw); if (parsed && typeof parsed === 'object') applyHabitState(parsed); } catch (err) {}
+    })();
+    document.querySelectorAll('.habit-row .dot-grid').forEach((grid) => {
+      grid.addEventListener('click', (e) => {
+        const dot = e.target.closest('.dot');
+        if (!dot) return;
+        const filled = !dot.classList.contains('filled');
+        dot.classList.toggle('filled', filled);
+        dot.setAttribute('aria-pressed', String(filled));
+        saveHabitState();
+      });
+    });
+
+    const GOALS_KEY = 'bloom-3d-dashboard-brushed-metal-goals';
+    function setGoalPercent(item, pct, opts) {
+      const persist = !opts || opts.persist !== false;
+      const clamped = Math.max(0, Math.min(100, Math.round(pct)));
+      item.querySelector('.progress-fill').style.width = clamped + '%';
+      item.querySelector('.pct').textContent = clamped + '%';
+      item.querySelector('.progress-track').setAttribute('aria-valuenow', String(clamped));
+      if (persist) saveGoalState();
+    }
+    function readGoalsFromDom() {
+      const state = {};
+      document.querySelectorAll('.goal-item').forEach((item) => {
+        state[item.dataset.goal] = Number(item.querySelector('.progress-track').getAttribute('aria-valuenow')) || 0;
+      });
+      return state;
+    }
+    function saveGoalState() { try { localStorage.setItem(GOALS_KEY, JSON.stringify(readGoalsFromDom())); } catch (err) {} }
+    (function initGoals() {
+      try {
+        const raw = localStorage.getItem(GOALS_KEY); if (!raw) return;
+        const parsed = JSON.parse(raw); if (!parsed || typeof parsed !== 'object') return;
+        document.querySelectorAll('.goal-item').forEach((item) => {
+          const v = parsed[item.dataset.goal];
+          if (typeof v === 'number') setGoalPercent(item, v, { persist: false });
+        });
+      } catch (err) {}
+    })();
+    function pctFromClientX(track, clientX) {
+      const rect = track.getBoundingClientRect();
+      if (!rect.width) return 0;
+      return ((clientX - rect.left) / rect.width) * 100;
+    }
+    document.querySelectorAll('.goal-item').forEach((item) => {
+      const track = item.querySelector('.progress-track');
+      let dragging = false;
+      const updateFromPointer = (e) => setGoalPercent(item, pctFromClientX(track, e.clientX));
+      track.addEventListener('pointerdown', (e) => { dragging = true; track.setPointerCapture(e.pointerId); updateFromPointer(e); });
+      track.addEventListener('pointermove', (e) => { if (dragging) updateFromPointer(e); });
+      track.addEventListener('pointerup', () => { dragging = false; });
+      track.addEventListener('pointercancel', () => { dragging = false; });
+      track.addEventListener('keydown', (e) => {
+        const current = Number(track.getAttribute('aria-valuenow')) || 0;
+        let next = null;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = current + 5;
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = current - 5;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = 100;
+        if (next === null) return;
+        e.preventDefault();
+        setGoalPercent(item, next);
+      });
+    });
+
+    const quotes = [
+      ['"Slow is smooth, and smooth is fast."', '— Unknown'],
+      ['"What you do every day matters more than what you do once in a while."', '— Gretchen Rubin'],
+      ['"Discipline is choosing between what you want now and what you want most."', '— Abraham Lincoln'],
+      ['"Small daily improvements are the key to staggering long-term results."', '— James Clear']
+    ];
+    const [q, a] = quotes[Math.floor(Math.random() * quotes.length) % quotes.length];
+    document.getElementById('quote-text').textContent = q;
+    document.getElementById('quote-author').textContent = a;
+  </script>
+</body>
+</html>
