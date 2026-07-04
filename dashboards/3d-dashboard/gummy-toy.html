@@ -49,17 +49,68 @@
 
   body {
     font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    background:
-      radial-gradient(circle at 12% 8%, #ffe4f2 0%, transparent 45%),
-      radial-gradient(circle at 88% 6%, #e4f0ff 0%, transparent 42%),
-      radial-gradient(circle at 70% 100%, #e2fff0 0%, transparent 45%),
-      linear-gradient(160deg, var(--bg-1), var(--bg-2));
+    /* Color-blocked two-tone backdrop: warm cream zone (upper-left, lit side)
+       meeting a dusty-rose zone (lower-right, shadow side), with candy blooms
+       for palette identity. The hard-ish stop creates the color block seam. */
+    background-color: #fbe7ef;
+    background-image:
+      radial-gradient(circle at 15% 12%, rgba(255,214,232,0.85) 0%, transparent 46%),
+      radial-gradient(circle at 90% 16%, rgba(160,196,255,0.42) 0%, transparent 40%),
+      radial-gradient(circle at 8% 84%, rgba(184,242,208,0.40) 0%, transparent 42%),
+      radial-gradient(circle at 84% 88%, rgba(255,158,196,0.55) 0%, transparent 50%),
+      linear-gradient(122deg, #fff4ef 0%, #fff1f6 43%, #f6d9e4 43%, #f2d0de 100%);
+    background-attachment: fixed;
     color: var(--text);
     min-height: 100vh;
     padding: 48px 24px 80px;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 1080px; margin: 0 auto; }
+  .wrap { max-width: 1080px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* Decorative floating candy spheres — scene depth behind the grid.
+     One consistent light source: upper-left. Each glossy gumdrop gets a big
+     white specular highlight offset upper-left and a soft colour-tinted
+     contact shadow beneath, so it reads as resting/floating under studio light. */
+  .scene {
+    position: fixed; inset: 0; overflow: hidden;
+    pointer-events: none; z-index: 0;
+    transform: rotate(-2deg) scale(1.06);
+  }
+  .sphere {
+    position: absolute; border-radius: 50%;
+    box-shadow:
+      inset 7px 9px 16px rgba(255,255,255,0.5),
+      inset -9px -12px 22px rgba(120,20,60,0.22);
+  }
+  /* big wet-look specular highlight, offset upper-left */
+  .sphere::before {
+    content: ""; position: absolute; top: 12%; left: 15%;
+    width: 40%; height: 32%; border-radius: 50%;
+    background: radial-gradient(circle at 42% 42%, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.35) 55%, rgba(255,255,255,0) 78%);
+    filter: blur(1px);
+  }
+  /* soft colour-tinted contact shadow beneath */
+  .sphere::after {
+    content: ""; position: absolute; left: 6%; bottom: -16%;
+    width: 88%; height: 24%; border-radius: 50%;
+    filter: blur(13px); z-index: -1;
+  }
+  .sphere.pink   { background: radial-gradient(circle at 33% 28%, #ffffff 0%, var(--pink) 20%, var(--pink-deep) 62%, #f2679f 100%); }
+  .sphere.pink::after   { background: rgba(242,103,159,0.48); }
+  .sphere.rose   { background: radial-gradient(circle at 33% 28%, #ffffff 0%, #ffb9d5 22%, #ff7fb0 66%, #e35388 100%); }
+  .sphere.rose::after   { background: rgba(227,83,136,0.48); }
+  .sphere.blue   { background: radial-gradient(circle at 33% 28%, #ffffff 0%, var(--blue) 22%, var(--blue-deep) 66%, #4d84f0 100%); }
+  .sphere.blue::after   { background: rgba(77,132,240,0.42); }
+  .sphere.mint   { background: radial-gradient(circle at 33% 28%, #ffffff 0%, var(--mint) 22%, var(--mint-deep) 66%, #4fcd8c 100%); }
+  .sphere.mint::after   { background: rgba(79,205,140,0.42); }
+  .sphere.yellow { background: radial-gradient(circle at 33% 28%, #ffffff 0%, var(--yellow) 22%, var(--yellow-deep) 66%, #f4c02a 100%); }
+  .sphere.yellow::after { background: rgba(244,192,42,0.42); }
+  .sphere.s1 { width: 172px; height: 172px; top: 3%;  left: 2%;  }
+  .sphere.s2 { width: 88px;  height: 88px;  top: 16%; left: 89%; }
+  .sphere.s3 { width: 128px; height: 128px; top: 68%; left: 3%;  }
+  .sphere.s4 { width: 68px;  height: 68px;  top: 44%; left: 93%; }
+  .sphere.s5 { width: 108px; height: 108px; top: 84%; left: 82%; }
+  .sphere.s6 { width: 60px;  height: 60px;  top: 6%;  left: 66%; }
 
   .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
   .back-link {
@@ -74,12 +125,20 @@
   .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 26px; }
 
   .card {
+    position: relative;
     background: var(--card);
     border: 3px solid #ffffff;
     border-radius: var(--radius-lg);
+    /* Thick squishy slab: crisp colour-tinted near edge (physical thickness,
+       lower-right under the upper-left light), softer ambient further out,
+       a bright glossy top-edge highlight (rounded, slightly domed top) plus a
+       faint left catch-light and a lower-inner shade to round the material. */
     box-shadow:
-      0 16px 34px rgba(255,138,190,0.32),
-      inset 0 3px 0 rgba(255,255,255,0.9);
+      7px 9px 12px rgba(214,96,152,0.30),
+      20px 28px 46px rgba(255,130,185,0.26),
+      inset 0 5px 0 rgba(255,255,255,0.95),
+      inset 3px 0 0 rgba(255,255,255,0.55),
+      inset 0 -12px 22px rgba(214,96,152,0.10);
     padding: 30px;
   }
 
@@ -93,18 +152,27 @@
   .orb {
     border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
     color: #6a1f42; font-weight: 800; position: relative;
-    background: radial-gradient(circle at 34% 28%, #ffffff 2%, var(--pink) 26%, var(--pink-deep) 100%);
-    box-shadow: 0 10px 22px rgba(255,110,170,0.5), inset 0 -6px 12px rgba(210,60,120,0.35);
+    background: radial-gradient(circle at 32% 26%, #ffffff 2%, var(--pink) 24%, var(--pink-deep) 82%, #ef5f97 100%);
+    /* upper-left light: tinted contact shadow lower-right + glossy inner dome */
+    box-shadow:
+      7px 12px 24px rgba(240,90,150,0.5),
+      inset 6px 8px 14px rgba(255,255,255,0.5),
+      inset -6px -10px 16px rgba(210,60,120,0.34);
   }
+  /* oversized wet specular highlight, offset upper-left */
   .orb::after {
-    content: ""; position: absolute; top: 12%; left: 20%; width: 36%; height: 26%;
-    background: rgba(255,255,255,0.92); border-radius: 50%; filter: blur(1px);
+    content: ""; position: absolute; top: 11%; left: 17%; width: 44%; height: 34%;
+    border-radius: 50%; filter: blur(1px);
+    background: radial-gradient(circle at 42% 42%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.4) 56%, rgba(255,255,255,0) 80%);
   }
   .orb-lg { width: 94px; height: 94px; font-size: 34px; }
   .orb-md {
     width: 66px; height: 66px; font-size: 26px; color: #1d4a6a;
-    background: radial-gradient(circle at 34% 28%, #ffffff 2%, var(--blue) 26%, var(--blue-deep) 100%);
-    box-shadow: 0 10px 22px rgba(111,160,255,0.5), inset 0 -6px 12px rgba(60,100,200,0.3);
+    background: radial-gradient(circle at 32% 26%, #ffffff 2%, var(--blue) 24%, var(--blue-deep) 82%, #4d84f0 100%);
+    box-shadow:
+      7px 12px 24px rgba(90,140,250,0.5),
+      inset 6px 8px 14px rgba(255,255,255,0.5),
+      inset -6px -10px 16px rgba(60,100,200,0.32);
   }
 
   .date-orb { grid-column: span 4; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; }
@@ -123,16 +191,19 @@
     transition: transform 0.14s ease, box-shadow 0.18s ease;
     display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--text);
   }
+  /* big wet-look gloss offset upper-left, consistent with the scene light */
   .mood-btn::before {
-    content: ""; position: absolute; top: 8%; left: 14%; width: 44%; height: 26%;
-    background: rgba(255,255,255,0.75); border-radius: 50%; filter: blur(2px); pointer-events: none;
+    content: ""; position: absolute; top: 6%; left: 12%; width: 50%; height: 30%;
+    border-radius: 50%; filter: blur(2px); pointer-events: none;
+    background: radial-gradient(circle at 42% 42%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.3) 60%, rgba(255,255,255,0) 82%);
   }
   .mood-btn .label { font-size: 12px; font-weight: 800; color: var(--text); }
-  .mood-btn[data-mood="low"]  { background: radial-gradient(circle at 40% 24%, #c4dbff, var(--blue) 70%);   box-shadow: 0 8px 16px rgba(111,160,255,0.38); }
-  .mood-btn[data-mood="flat"] { background: radial-gradient(circle at 40% 24%, #d6ffe8, var(--mint) 70%);   box-shadow: 0 8px 16px rgba(127,224,168,0.38); }
-  .mood-btn[data-mood="okay"] { background: radial-gradient(circle at 40% 24%, #ffe9f2, var(--pink) 70%);   box-shadow: 0 8px 16px rgba(255,138,190,0.4); }
-  .mood-btn[data-mood="good"] { background: radial-gradient(circle at 40% 24%, #fffbdc, var(--yellow) 70%); box-shadow: 0 8px 16px rgba(240,200,60,0.38); }
-  .mood-btn[data-mood="great"]{ background: radial-gradient(circle at 40% 24%, #ffd9e6, var(--pink-deep) 70%); box-shadow: 0 8px 16px rgba(255,110,170,0.45); }
+  /* colour-tinted crisp near edge (lower-right) + ambient + domed inner shade */
+  .mood-btn[data-mood="low"]  { background: radial-gradient(circle at 38% 22%, #d3e4ff, var(--blue) 72%);   box-shadow: 4px 8px 8px rgba(90,140,240,0.34), 6px 14px 20px rgba(111,160,255,0.30), inset 0 -6px 12px rgba(60,100,200,0.20); }
+  .mood-btn[data-mood="flat"] { background: radial-gradient(circle at 38% 22%, #d6ffe8, var(--mint) 72%);   box-shadow: 4px 8px 8px rgba(79,205,140,0.34), 6px 14px 20px rgba(127,224,168,0.30), inset 0 -6px 12px rgba(40,160,100,0.18); }
+  .mood-btn[data-mood="okay"] { background: radial-gradient(circle at 38% 22%, #ffe9f2, var(--pink) 72%);   box-shadow: 4px 8px 8px rgba(240,120,175,0.36), 6px 14px 20px rgba(255,138,190,0.32), inset 0 -6px 12px rgba(210,80,130,0.18); }
+  .mood-btn[data-mood="good"] { background: radial-gradient(circle at 38% 22%, #fffbdc, var(--yellow) 72%); box-shadow: 4px 8px 8px rgba(230,185,50,0.34), 6px 14px 20px rgba(240,200,60,0.30), inset 0 -6px 12px rgba(190,150,20,0.18); }
+  .mood-btn[data-mood="great"]{ background: radial-gradient(circle at 38% 22%, #ffd9e6, var(--pink-deep) 72%); box-shadow: 4px 8px 8px rgba(240,90,150,0.40), 6px 14px 20px rgba(255,110,170,0.34), inset 0 -6px 12px rgba(210,60,120,0.22); }
   .mood-btn:hover { transform: translateY(-3px); }
   .mood-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
   .mood-btn.active {
@@ -154,12 +225,13 @@
     position: relative; transition: transform 0.12s ease, box-shadow 0.16s ease;
   }
   .dot.filled {
-    background: radial-gradient(circle at 36% 26%, #ffffff 2%, var(--pink) 32%, var(--pink-deep) 100%);
-    box-shadow: 0 6px 12px rgba(255,110,170,0.45), inset 0 -3px 6px rgba(210,60,120,0.3);
+    background: radial-gradient(circle at 34% 26%, #ffffff 2%, var(--pink) 30%, var(--pink-deep) 88%, #ef5f97 100%);
+    box-shadow: 3px 6px 10px rgba(240,90,150,0.45), inset 3px 4px 7px rgba(255,255,255,0.5), inset -3px -4px 7px rgba(210,60,120,0.3);
   }
   .dot.filled::after {
-    content: ""; position: absolute; top: 16%; left: 20%; width: 34%; height: 24%;
-    background: rgba(255,255,255,0.9); border-radius: 50%;
+    content: ""; position: absolute; top: 14%; left: 18%; width: 40%; height: 30%;
+    border-radius: 50%; filter: blur(0.5px);
+    background: radial-gradient(circle at 42% 42%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.35) 58%, rgba(255,255,255,0) 82%);
   }
   .dot:hover { transform: translateY(-2px); }
   .dot:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
@@ -171,15 +243,32 @@
   .goal-label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; margin-bottom: 10px; }
   .goal-label .pct { color: var(--accent); font-variant-numeric: tabular-nums; }
   .progress-track {
+    position: relative;
     height: 20px; border-radius: 999px; background: #ffeef6;
-    box-shadow: inset 0 3px 7px rgba(210,120,160,0.3); border: 3px solid #ffffff;
-    overflow: hidden; padding: 3px; cursor: pointer; touch-action: none;
+    box-shadow: inset 2px 3px 7px rgba(210,120,160,0.32); border: 3px solid #ffffff;
+    padding: 3px; cursor: pointer; touch-action: none;
   }
   .progress-track:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
   .progress-fill {
+    position: relative;
     height: 100%; border-radius: 999px;
     background: linear-gradient(90deg, var(--pink), var(--pink-deep));
     box-shadow: inset 0 3px 4px rgba(255,255,255,0.7), inset 0 -3px 5px rgba(210,60,120,0.3);
+  }
+  /* chunky glossy candy handle at the leading edge, upper-left lit */
+  .progress-fill::after {
+    content: ""; position: absolute; right: -9px; top: 50%; transform: translateY(-50%);
+    width: 26px; height: 26px; border-radius: 50%;
+    background: radial-gradient(circle at 33% 27%, #ffffff 2%, var(--pink) 26%, var(--pink-deep) 88%, #ef5f97 100%);
+    box-shadow:
+      3px 5px 10px rgba(240,90,150,0.5),
+      inset 4px 5px 9px rgba(255,255,255,0.6),
+      inset -4px -6px 10px rgba(210,60,120,0.32);
+  }
+  .progress-fill::before {
+    content: ""; position: absolute; right: 0; top: 50%; transform: translate(45%, -95%);
+    width: 9px; height: 7px; border-radius: 50%; z-index: 1;
+    background: rgba(255,255,255,0.92); filter: blur(0.5px);
   }
 
   /* Focus */
@@ -210,6 +299,14 @@
 </style>
 </head>
 <body>
+  <div class="scene" aria-hidden="true">
+    <span class="sphere pink s1"></span>
+    <span class="sphere blue s2"></span>
+    <span class="sphere mint s3"></span>
+    <span class="sphere yellow s4"></span>
+    <span class="sphere rose s5"></span>
+    <span class="sphere rose s6"></span>
+  </div>
   <div class="wrap">
     <div class="top-nav">
       <a class="back-link" href="index.html">&larr; All 3D Dashboard designs</a>
