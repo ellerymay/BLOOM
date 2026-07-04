@@ -104,6 +104,14 @@
     pointer-events: none;
   }
   .tile.soon .preview { background: repeating-linear-gradient(45deg, #ede2d3, #ede2d3 10px, #e9dcc9 10px, #e9dcc9 20px); box-shadow: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.001ms !important;
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
 </style>
 </head>
 <body>
