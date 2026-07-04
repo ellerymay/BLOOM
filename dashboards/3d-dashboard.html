@@ -419,11 +419,11 @@
       <section class="card mood">
         <p class="section-title">Mood check-in</p>
         <div class="mood-row" id="mood-row">
-          <button class="mood-btn" data-mood="low"><span>😔</span><span class="label">Low</span></button>
-          <button class="mood-btn" data-mood="flat"><span>😐</span><span class="label">Flat</span></button>
-          <button class="mood-btn active" data-mood="okay"><span>🙂</span><span class="label">Okay</span></button>
-          <button class="mood-btn" data-mood="good"><span>😄</span><span class="label">Good</span></button>
-          <button class="mood-btn" data-mood="great"><span>🤩</span><span class="label">Great</span></button>
+          <button class="mood-btn" data-mood="low" aria-pressed="false"><span>😔</span><span class="label">Low</span></button>
+          <button class="mood-btn" data-mood="flat" aria-pressed="false"><span>😐</span><span class="label">Flat</span></button>
+          <button class="mood-btn active" data-mood="okay" aria-pressed="true"><span>🙂</span><span class="label">Okay</span></button>
+          <button class="mood-btn" data-mood="good" aria-pressed="false"><span>😄</span><span class="label">Good</span></button>
+          <button class="mood-btn" data-mood="great" aria-pressed="false"><span>🤩</span><span class="label">Great</span></button>
         </div>
       </section>
 
@@ -512,8 +512,12 @@
     document.getElementById('mood-row').addEventListener('click', (e) => {
       const btn = e.target.closest('.mood-btn');
       if (!btn) return;
-      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.mood-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
     });
 
     // Rotating quotes, no external calls
