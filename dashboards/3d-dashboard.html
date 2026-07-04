@@ -78,6 +78,11 @@
     transition: color 0.2s ease;
   }
   .back-link:hover { color: var(--text-dark); }
+  .back-link:focus-visible {
+    outline: 2px solid var(--coral);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
 
   .brand {
     font-weight: 700;
@@ -222,6 +227,11 @@
     align-items: center;
     gap: 10px;
     color: var(--text-dark);
+  }
+
+  .mood-btn:focus-visible {
+    outline: 2px solid var(--coral);
+    outline-offset: 3px;
   }
 
   .mood-btn span.label {
