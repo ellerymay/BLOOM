@@ -40,6 +40,16 @@
     --radius-lg: 32px;
     --radius-md: 22px;
     --radius-sm: 16px;
+
+    /* --- Directional-light shadow system ---
+       One studio light from the UPPER-LEFT: bright highlights sit top/left,
+       cast shadows fall down and to the RIGHT. Every elevated element reuses
+       these tokens so the whole scene stays lit from one consistent angle. */
+    --edge: rgba(158, 116, 78, 0.34);   /* crisp material-thickness edge just under an object */
+    --cast-near: rgba(150, 108, 74, 0.30); /* medium contact shadow, lower-right */
+    --cast-far: rgba(146, 104, 70, 0.34);  /* soft ambient shadow thrown on the surface behind */
+    --bevel: rgba(255, 255, 255, 0.78);    /* bright top bevel where the curved surface catches light */
+    --under: rgba(150, 108, 74, 0.12);     /* faint lower-right inner shade for curvature */
   }
 
   * { box-sizing: border-box; }
@@ -48,18 +58,78 @@
     margin: 0;
     padding: 0;
     min-height: 100%;
+    overflow-x: hidden; /* decorative spheres are clipped, never cause sideways scroll */
   }
 
   body {
     font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    background: radial-gradient(circle at 15% 10%, #fdf6ec 0%, var(--bg-1) 35%, var(--bg-2) 100%);
+    /* Color-blocked "set backdrop": a cream field lit from the upper-left that
+       falls into a dustier warm tone toward the lower-right, with a soft rose
+       block bleeding in from the bottom-right corner — a two-tone stage, not a
+       flat wash. */
+    background:
+      radial-gradient(120% 90% at 84% 92%, rgba(217, 138, 130, 0.20) 0%, rgba(217, 138, 130, 0) 48%),
+      radial-gradient(90% 80% at 12% 8%, #fdf6ec 0%, rgba(253, 246, 236, 0) 55%),
+      linear-gradient(133deg, #faf2e7 0%, var(--bg-1) 40%, #f1e2cd 100%);
+    background-attachment: fixed;
     color: var(--text-dark);
     min-height: 100vh;
     padding: 48px 24px 80px;
     -webkit-font-smoothing: antialiased;
   }
 
+  /* ---- Decorative floating-sphere layer ---------------------------------
+     Purely ornamental studio props. Fixed + overflow:hidden clips every
+     sphere to the viewport so nothing can widen the page, and a whisper of
+     tilt sells the "photographed set" depth. Sits behind all content. */
+  .scene {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transform: rotate(-1.5deg) scale(1.08); /* static tilt on decoration only, never on text */
+    transform-origin: center;
+  }
+
+  .sphere {
+    position: absolute;
+    border-radius: 50%;
+    /* stacked backgrounds: a tight specular hotspot over a body gradient whose
+       highlight is offset to the upper-left and core darkens to the lower-right */
+    background:
+      radial-gradient(circle at 26% 22%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0) 13%),
+      radial-gradient(circle at 32% 26%, var(--s-hi) 0%, var(--s-mid) 46%, var(--s-lo) 100%);
+    box-shadow: inset 3px 4px 10px rgba(255, 255, 255, 0.28),
+                inset -6px -8px 16px rgba(120, 78, 50, 0.22);
+  }
+  /* soft elliptical contact shadow beneath each sphere, offset down + right */
+  .sphere::after {
+    content: "";
+    position: absolute;
+    left: 14%;
+    right: -8%;
+    bottom: -16%;
+    height: 30%;
+    background: radial-gradient(ellipse at center, rgba(122, 84, 54, 0.34) 0%, rgba(122, 84, 54, 0) 70%);
+    filter: blur(7px);
+    z-index: -1;
+  }
+
+  .s-gold { --s-hi: #fbe7c6; --s-mid: #ecc07f; --s-lo: #cd8c4c; }
+  .s-coral { --s-hi: #f7d4c0; --s-mid: #ec9a76; --s-lo: #c86a49; }
+  .s-rose { --s-hi: #f0d0ca; --s-mid: #dc948c; --s-lo: #b8635c; }
+
+  .sphere.s1 { width: 168px; height: 168px; left: -58px; top: 88px; }
+  .sphere.s2 { width: 120px; height: 120px; right: -40px; top: 44px; }
+  .sphere.s3 { width: 140px; height: 140px; left: -52px; top: 55%; }
+  .sphere.s4 { width: 184px; height: 184px; right: 4%; bottom: -64px; }
+  .sphere.s5 { width: 70px; height: 70px; right: 21%; top: 33%; }
+  .sphere.s6 { width: 92px; height: 92px; right: 30%; bottom: 8%; }
+
   .wrap {
+    position: relative;
+    z-index: 1; /* all real content sits above the sphere layer */
     max-width: 1080px;
     margin: 0 auto;
   }
@@ -103,18 +173,31 @@
     gap: 28px;
   }
 
+  /* ---- Cards read as solid extruded slabs -----------------------------
+     crisp material edge just below (thickness) + medium contact shadow +
+     soft far ambient cast, all falling lower-right, PLUS a bright bevel
+     along the top edge. That trio is what makes a raised object instead of
+     a soft symmetric dent. */
   .card {
-    background: var(--card);
+    position: relative;
+    background:
+      linear-gradient(158deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 34%),
+      var(--card);
     border: 1px solid #8c6e50;
     border-radius: var(--radius-lg);
     box-shadow:
-      12px 12px 24px var(--shadow-dark),
-      -12px -12px 24px var(--shadow-light);
+      0 3px 0 1px var(--edge),
+      3px 11px 16px -4px var(--cast-near),
+      9px 26px 46px -14px var(--cast-far),
+      inset 1px 2px 0 var(--bevel),
+      inset -1px -3px 2px var(--under);
     padding: 32px;
   }
 
   .card-soft {
-    background: var(--card-soft);
+    background:
+      linear-gradient(158deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 34%),
+      var(--card-soft);
   }
 
   /* ---- Greeting ---- */
@@ -148,23 +231,30 @@
     font-size: 15px;
   }
 
+  /* ---- Orbs: small solid spheres under the same light ---- */
   .orb {
+    position: relative;
     border-radius: 50%;
-    background: linear-gradient(145deg, var(--gold), var(--coral));
+    background:
+      radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 24%),
+      linear-gradient(150deg, var(--gold) 0%, var(--coral) 100%);
     box-shadow:
-      8px 8px 18px var(--shadow-dark),
-      -8px -8px 18px var(--shadow-light);
+      0 3px 0 rgba(150, 92, 62, 0.32),
+      4px 11px 18px -3px rgba(150, 100, 70, 0.42),
+      inset 2px 3px 5px rgba(255, 255, 255, 0.55),
+      inset -3px -5px 8px rgba(140, 70, 50, 0.34);
     display: flex;
     align-items: center;
     justify-content: center;
     color: #fff8ef;
     font-weight: 700;
+    text-shadow: 0 1px 2px rgba(150, 82, 55, 0.45);
     flex-shrink: 0;
   }
 
   .orb-lg {
-    width: 96px;
-    height: 96px;
+    width: 100px;
+    height: 100px;
     font-size: 34px;
   }
 
@@ -214,18 +304,22 @@
     flex-wrap: wrap;
   }
 
+  /* raised chunky pebbles: bright top bevel, crisp edge + contact shadow lower-right */
   .mood-btn {
+    position: relative;
     flex: 1;
     min-width: 88px;
-    background: var(--card);
+    background: linear-gradient(160deg, #f8f0e4 0%, #efe4d3 100%);
     border: none;
     border-radius: var(--radius-md);
     padding: 20px 12px;
     font-size: 28px;
     cursor: pointer;
     box-shadow:
-      8px 8px 16px var(--shadow-dark),
-      -8px -8px 16px var(--shadow-light);
+      0 3px 0 rgba(170, 126, 88, 0.30),
+      3px 9px 15px -3px var(--cast-near),
+      inset 0 2px 0 rgba(255, 255, 255, 0.85),
+      inset 0 -2px 3px rgba(160, 118, 82, 0.12);
     transition: box-shadow 0.2s ease, transform 0.2s ease;
     display: flex;
     flex-direction: column;
@@ -245,12 +339,22 @@
     color: var(--text-muted);
   }
 
-  .mood-btn:hover { transform: translateY(-2px); }
-
-  .mood-btn.active {
+  .mood-btn:hover {
+    transform: translateY(-2px);
     box-shadow:
-      inset 6px 6px 12px var(--shadow-dark),
-      inset -6px -6px 12px var(--shadow-light);
+      0 4px 0 rgba(170, 126, 88, 0.30),
+      4px 13px 20px -3px var(--cast-near),
+      inset 0 2px 0 rgba(255, 255, 255, 0.85),
+      inset 0 -2px 3px rgba(160, 118, 82, 0.12);
+  }
+
+  /* pressed-in well: shadow now sinks from the upper-left, light pools lower-right */
+  .mood-btn.active {
+    background: linear-gradient(160deg, #efe3d1 0%, #f5ecdc 100%);
+    box-shadow:
+      inset 3px 4px 8px rgba(160, 118, 82, 0.38),
+      inset -2px -3px 5px rgba(255, 255, 255, 0.75),
+      0 1px 0 rgba(255, 255, 255, 0.55);
     transform: translateY(1px);
   }
 
@@ -288,11 +392,12 @@
     max-width: 100%;
   }
 
+  /* empty day = a small carved well (light lower-right, shade upper-left) */
   .dot {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: var(--card);
+    background: radial-gradient(circle at 68% 72%, #f8f1e6 0%, #ece0cf 100%);
     flex-shrink: 0;
     border: none;
     padding: 0;
@@ -301,15 +406,21 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     box-shadow:
-      inset 3px 3px 6px var(--shadow-dark),
-      inset -3px -3px 6px var(--shadow-light);
+      inset 2px 3px 5px rgba(160, 118, 82, 0.38),
+      inset -2px -2px 4px rgba(255, 255, 255, 0.85),
+      0 1px 0 rgba(255, 255, 255, 0.55);
   }
 
+  /* filled day = a solid raised bead with its own hotspot + edge + contact shadow */
   .dot.filled {
-    background: linear-gradient(145deg, var(--gold), var(--coral));
+    background:
+      radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 22%),
+      radial-gradient(circle at 34% 30%, var(--gold) 0%, var(--coral) 76%, #c9704b 100%);
     box-shadow:
-      3px 3px 6px var(--shadow-dark),
-      -2px -2px 5px var(--shadow-light);
+      0 2px 0 rgba(150, 92, 62, 0.32),
+      2px 6px 9px -1px rgba(150, 100, 70, 0.42),
+      inset 1px 2px 2px rgba(255, 255, 255, 0.5),
+      inset -1px -2px 3px rgba(140, 70, 50, 0.32);
   }
 
   .dot:focus-visible {
@@ -322,7 +433,7 @@
     grid-column: span 5;
   }
 
-  .goal-item { margin-bottom: 22px; }
+  .goal-item { margin-bottom: 24px; }
   .goal-item:last-child { margin-bottom: 0; }
 
   .goal-label {
@@ -335,14 +446,16 @@
 
   .goal-label span.pct { color: var(--coral); }
 
+  /* carved channel: shade sinks in from the upper-left */
   .progress-track {
-    height: 16px;
+    position: relative;
+    height: 18px;
     border-radius: 10px;
-    background: var(--card);
+    background: linear-gradient(#efe3d2, #f4ebdc);
     box-shadow:
-      inset 4px 4px 8px var(--shadow-dark),
-      inset -4px -4px 8px var(--shadow-light);
-    overflow: hidden;
+      inset 2px 3px 6px rgba(160, 118, 82, 0.40),
+      inset -1px -1px 3px rgba(255, 255, 255, 0.7),
+      0 1px 0 rgba(255, 255, 255, 0.6);
     padding: 3px;
     cursor: pointer;
     touch-action: none;
@@ -350,13 +463,37 @@
 
   .progress-track:focus-visible {
     outline: 2px solid var(--coral);
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
 
   .progress-fill {
+    position: relative;
     height: 100%;
     border-radius: 8px;
     background: linear-gradient(90deg, var(--gold), var(--coral));
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.5),
+      0 1px 2px rgba(150, 100, 70, 0.28);
+  }
+
+  /* solid slider handle knob riding the end of the fill */
+  .progress-fill::after {
+    content: "";
+    position: absolute;
+    right: -3px;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0) 24%),
+      radial-gradient(circle at 34% 30%, #f3ce97 0%, var(--coral) 78%, #cf7350 100%);
+    box-shadow:
+      0 2px 0 rgba(150, 92, 62, 0.30),
+      2px 4px 6px -1px rgba(150, 100, 70, 0.42),
+      inset 1px 2px 2px rgba(255, 255, 255, 0.55),
+      inset -1px -2px 3px rgba(140, 70, 50, 0.3);
   }
 
   /* ---- Weekly focus ---- */
@@ -381,8 +518,8 @@
   }
 
   .orb-md {
-    width: 72px;
-    height: 72px;
+    width: 76px;
+    height: 76px;
     font-size: 26px;
   }
 
@@ -417,6 +554,8 @@
       grid-column: span 12;
     }
     .card { padding: 24px; }
+    /* pull the biggest edge spheres in a touch so less of the scene is empty */
+    .sphere.s4 { right: -4%; }
   }
 
   @media (max-width: 480px) {
@@ -428,6 +567,10 @@
     .habit-name {
       width: auto;
     }
+    /* shrink decoration on phones so it frames rather than crowds the cards */
+    .sphere.s1 { width: 120px; height: 120px; }
+    .sphere.s4 { width: 130px; height: 130px; }
+    .sphere.s2, .sphere.s5, .sphere.s6 { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -440,6 +583,16 @@
 </style>
 </head>
 <body>
+  <!-- Decorative studio spheres — behind everything, ignored by AT, never interactive -->
+  <div class="scene" aria-hidden="true">
+    <div class="sphere s-gold s1"></div>
+    <div class="sphere s-coral s2"></div>
+    <div class="sphere s-rose s3"></div>
+    <div class="sphere s-gold s4"></div>
+    <div class="sphere s-coral s5"></div>
+    <div class="sphere s-rose s6"></div>
+  </div>
+
   <div class="wrap">
     <div class="top-nav">
       <a class="back-link" href="index.html">&larr; All 3D Dashboard designs</a>
