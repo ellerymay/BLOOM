@@ -6,9 +6,9 @@ Open `index.html` to browse available dashboards.
 
 ## Dashboards
 
-Every category is the same underlying personal "life OS" dashboard — daily greeting, mood check-in, habit tracker, goal progress, weekly focus, and a motivational quote — reskinned 5 different ways. Pick a category, then pick a design within it.
+Every category is the same underlying personal "life OS" dashboard — daily greeting, mood check-in, habit tracker, goal progress, weekly focus, and a motivational quote — reskinned several different ways. Pick a category, then pick a design within it.
 
-- **[3D Dashboard](dashboards/3d-dashboard/index.html)** — soft, pillowy, dimensional materials. 5 designs: Warm Neumorphic, Deep Space Console, Holographic Iridescent, Brushed Metal Console, Gummy Toy.
+- **[3D Dashboard](dashboards/3d-dashboard/index.html)** — soft, pillowy, dimensional materials, with floating gradient spheres and layered material-edge shadows for real depth. 6 designs: Warm Neumorphic, Deep Space Console, Holographic Iridescent, Brushed Metal Console, Gummy Toy, Clay Studio.
 - **[Glassmorphic](dashboards/glassmorphic/index.html)** — frosted, translucent layers over gradient backdrops. 5 designs: Daylight Glass, Obsidian Glass, Aurora Glass, Amber Glass, Frost Glass.
 - **[Editorial Minimal](dashboards/editorial-minimal/index.html)** — typographic, high-contrast, print-inspired layouts. 5 designs: Swiss Grid, Broadsheet, Brutalist Type, Runway, Ledger.
 
