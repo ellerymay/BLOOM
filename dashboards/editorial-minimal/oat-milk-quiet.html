@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oat Milk Quiet — Editorial Minimal — BLOOM</title>
+<meta name="description" content="A quiet, airy personal dashboard — oversized thin-weight greeting, warm oat-milk neutrals, single-column editorial layout. A single dependency-free HTML file from the BLOOM gallery.">
+<meta property="og:title" content="Oat Milk Quiet — Editorial Minimal">
+<meta property="og:description" content="Oversized thin type on warm oat-milk neutrals — a quiet, journal-like personal dashboard in one dependency-free file.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23F2EDE2%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2213%22%20fill%3D%22none%22%20stroke%3D%22%236E8060%22%20stroke-width%3D%223%22%2F%3E%3C%2Fsvg%3E">
+<style>
+  /* Self-hosted Inter — variable weight 100-900, normal + italic. No network dependency. */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-normal.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Inter';
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-italic.woff2') format('woff2');
+  }
+
+  :root {
+    --page: #F2EDE2;       /* oat milk */
+    --ink: #2E2E2E;        /* primary text — 11.6:1 on page */
+    --secondary: #6A655C;  /* muted taupe — 4.96:1 on page (darkened from spec #8A857C to pass WCAG AA) */
+    --hairline: rgba(46, 46, 46, 0.10);
+    --accent: #6E8060;     /* grounded sage — 3.66:1 on page, 3.21:1 on track (darkened from spec sage to pass 3:1) */
+    --track: #E4DFD3;      /* light neutral progress track */
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: var(--page);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    padding: 40px 28px 120px;
+  }
+
+  .page {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* ---- Back link ---- */
+  .back-link {
+    display: inline-block;
+    text-decoration: none;
+    color: var(--secondary);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 64px;
+    transition: color 0.2s ease;
+  }
+  .back-link:hover { color: var(--ink); }
+
+  /* ---- Shared eyebrow label + short accent underline ---- */
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    margin: 0 0 20px;
+  }
+  .eyebrow::after {
+    content: "";
+    display: block;
+    width: 22px;
+    height: 2px;
+    margin-top: 8px;
+    background: var(--accent);
+  }
+
+  section { margin-top: 56px; }
+
+  /* ---- Greeting ---- */
+  .greeting { margin-top: 0; }
+  .greeting h1 {
+    font-size: 52px;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    margin: 0;
+  }
+  .greeting .welcome {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 18px 0 4px;
+  }
+  .greeting .subcopy {
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--secondary);
+    margin: 0;
+    max-width: 34em;
+  }
+  .datestamp {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-top: 32px;
+  }
+  .datestamp .day {
+    font-size: 44px;
+    font-weight: 300;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .datestamp .weekday {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--secondary);
+  }
+
+  /* ---- Mood ---- */
+  .mood-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .mood-btn {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--hairline);
+    color: var(--secondary);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 16px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: color 0.18s ease, border-color 0.18s ease;
+  }
+  .mood-btn .emoji { font-size: 18px; line-height: 1; }
+  .mood-btn:hover { border-color: var(--secondary); }
+  .mood-btn[aria-pressed="true"] {
+    color: var(--ink);
+    border-color: var(--accent);
+    box-shadow: inset 0 -2px 0 0 var(--accent);
+  }
+
+  /* ---- Habits ---- */
+  .habit-legend {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+    padding-left: 0;
+  }
+  .habit-legend span {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    text-align: center;
+  }
+  .habit {
+    margin-bottom: 26px;
+  }
+  .habit:last-child { margin-bottom: 0; }
+  .habit .name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0 0 10px;
+  }
+  .habit-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .day-cell {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: 1px solid var(--hairline);
+    min-height: 44px;
+    min-width: 0;
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.18s ease, border-color 0.18s ease;
+  }
+  .day-cell:hover { border-color: var(--secondary); }
+  .day-cell[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* ---- Goals ---- */
+  .goal { margin-bottom: 30px; }
+  .goal:last-child { margin-bottom: 0; }
+  .goal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+  }
+  .goal-head .label {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .goal-head .pct {
+    font-size: 20px;
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .slider {
+    position: relative;
+    height: 24px;               /* generous grab area */
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    touch-action: none;
+  }
+  .slider .track {
+    position: relative;
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;       /* the one honest whisper of rounding */
+    background: var(--track);
+    overflow: hidden;
+  }
+  .slider .fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--accent);
+    transition: width 0.15s ease;
+  }
+
+  /* ---- Focus ---- */
+  .focus-heading {
+    font-size: 24px;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin: 0 0 14px;
+    color: var(--ink);
+  }
+  .focus-body {
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--secondary);
+    margin: 0;
+    max-width: 36em;
+  }
+
+  /* ---- Quote ---- */
+  .quote blockquote {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--ink);
+    max-width: 20em;
+  }
+  .quote .attr {
+    margin-top: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--secondary);
+  }
+  .quote .attr::before { content: "\2014\00a0"; }
+
+  /* ---- Focus visibility ---- */
+  a:focus-visible,
+  .mood-btn:focus-visible,
+  .day-cell:focus-visible,
+  .slider:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 420px) {
+    body { padding: 32px 16px 96px; }
+    .greeting h1 { font-size: 42px; }
+    .datestamp .day { font-size: 38px; }
+    .quote blockquote { font-size: 22px; }
+    .habit-legend, .habit-row { gap: 4px; }
+    .habit-legend span { font-size: 9px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.001ms !important;
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <a class="back-link" href="index.html">&larr; All Editorial Minimal designs</a>
+
+    <!-- Greeting -->
+    <section class="greeting" aria-labelledby="greeting-eyebrow">
+      <p class="eyebrow" id="greeting-eyebrow">Today</p>
+      <h1 id="greeting-headline">Good Morning</h1>
+      <p class="welcome">Welcome back, Ellery.</p>
+      <p class="subcopy">A quiet page to return to. Take it one small thing at a time.</p>
+      <div class="datestamp">
+        <span class="day" id="date-day">00</span>
+        <span class="weekday" id="date-weekday">&mdash;</span>
+      </div>
+    </section>
+
+    <!-- Mood -->
+    <section aria-labelledby="mood-eyebrow">
+      <p class="eyebrow" id="mood-eyebrow">How are you, really?</p>
+      <div class="mood-group" role="group" aria-label="Mood check-in" id="mood-group"></div>
+    </section>
+
+    <!-- Habits -->
+    <section aria-labelledby="habits-eyebrow">
+      <p class="eyebrow" id="habits-eyebrow">The week in small marks</p>
+      <div class="habit-legend" aria-hidden="true">
+        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+      </div>
+      <div id="habits"></div>
+    </section>
+
+    <!-- Goals -->
+    <section aria-labelledby="goals-eyebrow">
+      <p class="eyebrow" id="goals-eyebrow">The longer road</p>
+      <div id="goals"></div>
+    </section>
+
+    <!-- Focus -->
+    <section aria-labelledby="focus-eyebrow">
+      <p class="eyebrow" id="focus-eyebrow">This week&rsquo;s focus</p>
+      <h2 class="focus-heading">Protect your mornings.</h2>
+      <p class="focus-body">Block 90 minutes before 9am for deep, uninterrupted work &mdash; no notifications, no meetings.</p>
+    </section>
+
+    <!-- Quote -->
+    <section class="quote" aria-labelledby="quote-eyebrow">
+      <p class="eyebrow" id="quote-eyebrow">A note to carry</p>
+      <blockquote id="quote-text"></blockquote>
+      <div class="attr" id="quote-attr"></div>
+    </section>
+  </main>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var HABITS_KEY = "bloom-editorial-minimal-oat-milk-quiet-habits";
+    var GOALS_KEY  = "bloom-editorial-minimal-oat-milk-quiet-goals";
+
+    /* ---------- Greeting + date ---------- */
+    var now = new Date();
+    var hour = now.getHours();
+    var greeting = hour < 12 ? "Good Morning" : (hour < 18 ? "Good Afternoon" : "Good Evening");
+    document.getElementById("greeting-headline").textContent = greeting;
+
+    var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    document.getElementById("date-day").textContent = String(now.getDate()).padStart(2, "0");
+    document.getElementById("date-weekday").textContent = days[now.getDay()];
+
+    /* ---------- Mood ---------- */
+    var MOODS = [
+      { emoji: "😔", label: "Low" },
+      { emoji: "😐", label: "Flat" },
+      { emoji: "🙂", label: "Okay" },
+      { emoji: "😄", label: "Good" },
+      { emoji: "🤩", label: "Great" }
+    ];
+    var DEFAULT_MOOD = 2; /* Okay */
+    var moodGroup = document.getElementById("mood-group");
+    MOODS.forEach(function (m, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "mood-btn";
+      b.setAttribute("aria-pressed", i === DEFAULT_MOOD ? "true" : "false");
+      b.innerHTML = '<span class="emoji" aria-hidden="true">' + m.emoji + '</span><span>' + m.label + '</span>';
+      b.addEventListener("click", function () {
+        var btns = moodGroup.querySelectorAll(".mood-btn");
+        btns.forEach(function (x) { x.setAttribute("aria-pressed", "false"); });
+        b.setAttribute("aria-pressed", "true");
+      });
+      moodGroup.appendChild(b);
+    });
+
+    /* ---------- Habits ---------- */
+    var HABIT_DEFAULTS = [
+      { name: "Meditate", days: [true, true, true, true, false, false, false] },
+      { name: "Read",     days: [true, true, false, true, true, false, false] },
+      { name: "Move",     days: [true, false, true, false, true, false, false] },
+      { name: "Hydrate",  days: [true, true, true, true, true, false, false] },
+      { name: "Journal",  days: [false, true, false, true, false, false, false] }
+    ];
+
+    function loadHabits() {
+      try {
+        var raw = localStorage.getItem(HABITS_KEY);
+        if (!raw) return clone(HABIT_DEFAULTS);
+        var parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed) || parsed.length !== HABIT_DEFAULTS.length) return clone(HABIT_DEFAULTS);
+        for (var i = 0; i < parsed.length; i++) {
+          if (!parsed[i] || !Array.isArray(parsed[i].days) || parsed[i].days.length !== 7) return clone(HABIT_DEFAULTS);
+        }
+        return parsed;
+      } catch (e) {
+        return clone(HABIT_DEFAULTS);
+      }
+    }
+    function clone(x) { return JSON.parse(JSON.stringify(x)); }
+    function saveHabits() {
+      try { localStorage.setItem(HABITS_KEY, JSON.stringify(habits)); } catch (e) {}
+    }
+
+    var habits = loadHabits();
+    var habitsRoot = document.getElementById("habits");
+    var DAY_NAMES = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+
+    habits.forEach(function (h, hi) {
+      var wrap = document.createElement("div");
+      wrap.className = "habit";
+
+      var name = document.createElement("p");
+      name.className = "name";
+      name.textContent = h.name;
+      wrap.appendChild(name);
+
+      var row = document.createElement("div");
+      row.className = "habit-row";
+      row.setAttribute("role", "group");
+      row.setAttribute("aria-label", h.name + " — this week");
+
+      h.days.forEach(function (done, di) {
+        var cell = document.createElement("button");
+        cell.type = "button";
+        cell.className = "day-cell";
+        cell.setAttribute("aria-pressed", done ? "true" : "false");
+        cell.setAttribute("aria-label", h.name + ", " + DAY_NAMES[di]);
+        cell.addEventListener("click", function () {
+          habits[hi].days[di] = !habits[hi].days[di];
+          cell.setAttribute("aria-pressed", habits[hi].days[di] ? "true" : "false");
+          saveHabits();
+        });
+        row.appendChild(cell);
+      });
+
+      wrap.appendChild(row);
+      habitsRoot.appendChild(wrap);
+    });
+
+    /* ---------- Goals ---------- */
+    var GOAL_DEFAULTS = [
+      { label: "Read 20 books", value: 65 },
+      { label: "Save $10,000", value: 40 },
+      { label: "Run 500 miles", value: 82 }
+    ];
+
+    function loadGoals() {
+      try {
+        var raw = localStorage.getItem(GOALS_KEY);
+        if (!raw) return clone(GOAL_DEFAULTS);
+        var parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed) || parsed.length !== GOAL_DEFAULTS.length) return clone(GOAL_DEFAULTS);
+        for (var i = 0; i < parsed.length; i++) {
+          var v = parsed[i] && parsed[i].value;
+          if (typeof v !== "number" || v < 0 || v > 100 || isNaN(v)) return clone(GOAL_DEFAULTS);
+        }
+        return parsed;
+      } catch (e) {
+        return clone(GOAL_DEFAULTS);
+      }
+    }
+    function saveGoals() {
+      try { localStorage.setItem(GOALS_KEY, JSON.stringify(goals)); } catch (e) {}
+    }
+
+    var goals = loadGoals();
+    var goalsRoot = document.getElementById("goals");
+
+    goals.forEach(function (g, gi) {
+      var wrap = document.createElement("div");
+      wrap.className = "goal";
+
+      var head = document.createElement("div");
+      head.className = "goal-head";
+      var label = document.createElement("span");
+      label.className = "label";
+      label.textContent = g.label;
+      var pct = document.createElement("span");
+      pct.className = "pct";
+      var labelId = "goal-label-" + gi;
+      label.id = labelId;
+      head.appendChild(label);
+      head.appendChild(pct);
+      wrap.appendChild(head);
+
+      var slider = document.createElement("div");
+      slider.className = "slider";
+      slider.setAttribute("role", "slider");
+      slider.setAttribute("tabindex", "0");
+      slider.setAttribute("aria-valuemin", "0");
+      slider.setAttribute("aria-valuemax", "100");
+      slider.setAttribute("aria-labelledby", labelId);
+
+      var track = document.createElement("div");
+      track.className = "track";
+      var fill = document.createElement("div");
+      fill.className = "fill";
+      track.appendChild(fill);
+      slider.appendChild(track);
+      wrap.appendChild(slider);
+      goalsRoot.appendChild(wrap);
+
+      function clamp(v) { return Math.max(0, Math.min(100, Math.round(v))); }
+
+      function render() {
+        var v = goals[gi].value;
+        fill.style.width = v + "%";
+        pct.textContent = v + "%";
+        slider.setAttribute("aria-valuenow", String(v));
+        slider.setAttribute("aria-valuetext", v + " percent");
+      }
+
+      function setValue(v, persist) {
+        goals[gi].value = clamp(v);
+        render();
+        if (persist) saveGoals();
+      }
+
+      function valueFromEvent(clientX) {
+        var rect = track.getBoundingClientRect();
+        if (rect.width === 0) return goals[gi].value;
+        return ((clientX - rect.left) / rect.width) * 100;
+      }
+
+      var dragging = false;
+      slider.addEventListener("pointerdown", function (e) {
+        dragging = true;
+        slider.setPointerCapture(e.pointerId);
+        setValue(valueFromEvent(e.clientX), false);
+        e.preventDefault();
+      });
+      slider.addEventListener("pointermove", function (e) {
+        if (!dragging) return;
+        setValue(valueFromEvent(e.clientX), false);
+      });
+      slider.addEventListener("pointerup", function (e) {
+        if (!dragging) return;
+        dragging = false;
+        try { slider.releasePointerCapture(e.pointerId); } catch (err) {}
+        saveGoals();
+      });
+      slider.addEventListener("pointercancel", function () {
+        if (dragging) { dragging = false; saveGoals(); }
+      });
+
+      slider.addEventListener("keydown", function (e) {
+        var v = goals[gi].value, handled = true;
+        switch (e.key) {
+          case "ArrowLeft":
+          case "ArrowDown":  setValue(v - 5, true); break;
+          case "ArrowRight":
+          case "ArrowUp":    setValue(v + 5, true); break;
+          case "Home":       setValue(0, true); break;
+          case "End":        setValue(100, true); break;
+          case "PageDown":   setValue(v - 10, true); break;
+          case "PageUp":     setValue(v + 10, true); break;
+          default: handled = false;
+        }
+        if (handled) e.preventDefault();
+      });
+
+      render();
+    });
+
+    /* ---------- Quote ---------- */
+    var QUOTES = [
+      { text: "Slow is smooth, and smooth is fast.", who: "Unknown" },
+      { text: "What you do every day matters more than what you do once in a while.", who: "Gretchen Rubin" },
+      { text: "Discipline is choosing between what you want now and what you want most.", who: "Abraham Lincoln" },
+      { text: "Small daily improvements are the key to staggering long-term results.", who: "James Clear" }
+    ];
+    var q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    document.getElementById("quote-text").textContent = "“" + q.text + "”";
+    document.getElementById("quote-attr").textContent = q.who;
+  })();
+  </script>
+</body>
+</html>
