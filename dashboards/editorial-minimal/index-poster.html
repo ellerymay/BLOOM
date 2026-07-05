@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Index Poster — Editorial Minimal — BLOOM</title>
+<meta name="description" content="A design-poster / magazine-contents take on the BLOOM personal dashboard — strict ruled column grid, numbered sections, and a single warm-yellow underline accent. Single-file, dependency-free, fully offline.">
+<meta property="og:title" content="Index Poster — Editorial Minimal">
+<meta property="og:description" content="Strict ruled grid, numbered sections, one yellow underline accent — a typographic index-poster dashboard.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20fill%3D%22%23F0EEEA%22%2F%3E%3Crect%20x%3D%2214%22%20y%3D%2240%22%20width%3D%2236%22%20height%3D%226%22%20fill%3D%22%23F5C518%22%2F%3E%3Ctext%20x%3D%2232%22%20y%3D%2234%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2228%22%20font-weight%3D%22800%22%20text-anchor%3D%22middle%22%20fill%3D%22%23242424%22%3E01%3C%2Ftext%3E%3C%2Fsvg%3E">
+<style>
+  /* ---- Self-hosted Inter (variable, latin) — normal + italic, no network ---- */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-normal.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Inter';
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-italic.woff2') format('woff2');
+  }
+
+  :root {
+    --page: #F0EEEA;        /* page       */
+    --ink: #242424;         /* 13.4:1 vs page */
+    --secondary: #66615A;   /* 5.3:1 vs page — darkened from spec #7A756E to pass 4.5:1 body/label text */
+    --accent: #F5C518;      /* warm yellow — underlines + one active state only */
+    --rule: rgba(36, 36, 36, 0.55);  /* structural grid dividers ≈ #807F7D ≈ 3.45:1 as non-text boundary */
+    --hairline: rgba(36, 36, 36, 0.14); /* fine decorative sub-lines */
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: var(--page);
+    color: var(--ink);
+    min-height: 100vh;
+    font-feature-settings: "tnum" 1, "cv05" 1;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  .sheet {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 28px 24px 72px;
+  }
+
+  /* ---- Masthead ---- */
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 4px;
+  }
+  .back-link {
+    text-decoration: none;
+    color: var(--secondary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 2px;
+  }
+  .back-link:hover { color: var(--ink); }
+  .masthead .title {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .colophon {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 10px 0 24px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    border-bottom: 1px solid var(--rule);
+  }
+  .colophon .lead {
+    font-size: 26px;
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: var(--ink);
+    flex: 1 1 320px;
+  }
+  .colophon .lead em { font-style: italic; }
+  .colophon .issue { text-align: right; }
+
+  /* ---- The ruled grid ---- */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "greet mood"
+      "habits habits"
+      "goals focus"
+      "quote quote";
+    border-top: 1px solid var(--rule);
+    border-left: 1px solid var(--rule);
+  }
+  .module {
+    grid-area: var(--area);
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 26px 26px 30px;
+    position: relative;
+    min-width: 0;
+  }
+  .m-greet  { --area: greet; }
+  .m-mood   { --area: mood; }
+  .m-habits { --area: habits; }
+  .m-goals  { --area: goals; }
+  .m-focus  { --area: focus; }
+  .m-quote  { --area: quote; }
+
+  /* section index number — meaningful sequence, top-right */
+  .index-no {
+    position: absolute;
+    top: 20px;
+    right: 22px;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1;
+    font-feature-settings: "tnum" 1;
+  }
+
+  .eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    margin: 0;
+    display: inline-block;
+  }
+  .eyebrow::after {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 3px;
+    background: var(--accent);
+    margin-top: 6px;
+  }
+  .headline {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 14px 0 0;
+    line-height: 1.15;
+  }
+  .subcopy {
+    color: var(--secondary);
+    font-size: 13.5px;
+    margin: 8px 0 0;
+    max-width: 42ch;
+  }
+
+  /* ---- 01 Greeting ---- */
+  .m-greet .greeting {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 16px 0 2px;
+    line-height: 1.08;
+  }
+  .m-greet .welcome {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .datestamp {
+    margin-top: 20px;
+    padding-top: 12px;
+    border-top: 1px solid var(--hairline);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+  }
+  .datestamp .daynum {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0;
+    color: var(--ink);
+  }
+
+  /* ---- 02 Mood ---- */
+  .mood-set {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .mood-btn {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--hairline);
+    border-radius: 0;
+    padding: 12px 4px 14px;
+    min-height: 64px;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .mood-btn .emoji { font-size: 22px; line-height: 1; }
+  .mood-btn .mlabel {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .mood-btn:hover { border-color: var(--rule); color: var(--ink); }
+  .mood-btn[aria-pressed="true"] {
+    border-color: var(--ink);
+    color: var(--ink);
+    font-weight: 800;
+  }
+  /* single active-state use of yellow: underline bar under selected mood */
+  .mood-btn[aria-pressed="true"] .mlabel { font-weight: 800; }
+  .mood-btn[aria-pressed="true"]::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: -1px;
+    height: 3px;
+    background: var(--accent);
+  }
+
+  /* ---- 03 Habits ---- */
+  .habits-wrap { margin-top: 18px; }
+  .day-key {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 8px;
+    max-width: 480px;
+  }
+  .day-key span {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--secondary);
+  }
+  .habit-row { padding: 12px 0; border-top: 1px solid var(--hairline); }
+  .habit-row:first-of-type { border-top: 0; }
+  .habit-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .habit-name {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .habit-count {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--secondary);
+    font-feature-settings: "tnum" 1;
+  }
+  .days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    max-width: 480px;
+  }
+  .day {
+    appearance: none;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid var(--rule);
+    border-radius: 0;
+    background: transparent;
+    min-height: 44px;
+    aspect-ratio: 1 / 1;
+    padding: 0;
+    position: relative;
+    transition: background 0.12s ease;
+  }
+  .day[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); }
+  .day[aria-pressed="true"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 8px;
+    height: 8px;
+    background: var(--page);
+  }
+  .day:hover { border-color: var(--ink); }
+
+  /* ---- 04 Goals ---- */
+  .goals-list { margin-top: 18px; display: flex; flex-direction: column; gap: 22px; }
+  .goal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .goal-label { font-size: 14px; font-weight: 700; }
+  .goal-pct {
+    font-size: 16px;
+    font-weight: 800;
+    font-feature-settings: "tnum" 1;
+    letter-spacing: -0.01em;
+  }
+  .slider {
+    position: relative;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    touch-action: none;
+  }
+  .slider-track {
+    position: relative;
+    height: 4px;
+    width: 100%;
+    background: var(--hairline);
+  }
+  .slider-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: var(--ink);
+    width: 0%;
+  }
+  .slider-thumb {
+    position: absolute;
+    top: 50%;
+    width: 2px;
+    height: 18px;
+    background: var(--ink);
+    transform: translate(-50%, -50%);
+    left: 0%;
+  }
+  .slider:focus-visible { outline: none; }
+  .slider:focus-visible .slider-thumb {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  /* ---- 05 Focus ---- */
+  .m-focus .focus-body {
+    margin-top: 16px;
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 46ch;
+  }
+  .m-focus .focus-body strong { font-weight: 800; }
+
+  /* ---- 06 Quote (footer aphorism) ---- */
+  .m-quote { text-align: center; padding: 40px 26px 42px; }
+  .aphorism {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    max-width: 760px;
+    margin: 22px auto 0;
+  }
+  .aphorism::before,
+  .aphorism::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+  .aphorism blockquote {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+    flex: 0 1 auto;
+    max-width: 60ch;
+  }
+  .aphorism .attribution {
+    display: block;
+    font-style: normal;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    margin-top: 8px;
+  }
+
+  /* ---- Focus visibility (sharp, high-contrast) ---- */
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+
+  /* ---- Responsive: single-column stack; dividers become horizontal rules ---- */
+  @media (max-width: 760px) {
+    .grid {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "greet"
+        "mood"
+        "habits"
+        "goals"
+        "focus"
+        "quote";
+    }
+    .module { padding: 22px 18px 26px; }
+    .m-quote { padding: 34px 18px 36px; }
+    .colophon .lead { font-size: 22px; }
+    .index-no { font-size: 24px; top: 18px; right: 18px; }
+    .aphorism { gap: 12px; }
+  }
+  @media (max-width: 400px) {
+    .sheet { padding: 22px 14px 56px; }
+    .module { padding: 20px 14px 24px; }
+    .mood-set { gap: 5px; }
+    .mood-btn { padding: 10px 2px 12px; }
+    .days, .day-key { gap: 4px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.001ms !important;
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="masthead">
+      <a class="back-link" href="index.html">&larr; All Editorial Minimal designs</a>
+      <div class="title">BLOOM · Editorial Minimal</div>
+    </div>
+
+    <div class="colophon">
+      <div class="lead">The Daily <em>Index</em></div>
+      <div class="issue">Personal Almanac · Vol. I</div>
+    </div>
+
+    <main class="grid">
+      <!-- 01 Greeting -->
+      <section class="module m-greet" aria-labelledby="lbl-greet">
+        <span class="index-no" aria-hidden="true">01</span>
+        <p class="eyebrow" id="lbl-greet">Today</p>
+        <h1 class="greeting" id="greeting">Good Morning</h1>
+        <p class="welcome">Welcome back, Ellery</p>
+        <p class="subcopy">A clean page to set the day in order — read, move, and begin.</p>
+        <div class="datestamp">
+          <span class="daynum" id="date-daynum">00</span>
+          <span id="date-weekday">Weekday</span>
+        </div>
+      </section>
+
+      <!-- 02 Mood -->
+      <section class="module m-mood" aria-labelledby="lbl-mood">
+        <span class="index-no" aria-hidden="true">02</span>
+        <p class="eyebrow" id="lbl-mood">Check-in</p>
+        <h2 class="headline">How are you today?</h2>
+        <div class="mood-set" role="group" aria-label="Mood check-in" id="mood-set">
+          <button type="button" class="mood-btn" aria-pressed="false" data-mood="Low"><span class="emoji" aria-hidden="true">😔</span><span class="mlabel">Low</span></button>
+          <button type="button" class="mood-btn" aria-pressed="false" data-mood="Flat"><span class="emoji" aria-hidden="true">😐</span><span class="mlabel">Flat</span></button>
+          <button type="button" class="mood-btn" aria-pressed="true" data-mood="Okay"><span class="emoji" aria-hidden="true">🙂</span><span class="mlabel">Okay</span></button>
+          <button type="button" class="mood-btn" aria-pressed="false" data-mood="Good"><span class="emoji" aria-hidden="true">😄</span><span class="mlabel">Good</span></button>
+          <button type="button" class="mood-btn" aria-pressed="false" data-mood="Great"><span class="emoji" aria-hidden="true">🤩</span><span class="mlabel">Great</span></button>
+        </div>
+      </section>
+
+      <!-- 03 Habits -->
+      <section class="module m-habits" aria-labelledby="lbl-habits">
+        <span class="index-no" aria-hidden="true">03</span>
+        <p class="eyebrow" id="lbl-habits">Habits</p>
+        <h2 class="headline">This week&rsquo;s ledger</h2>
+        <div class="habits-wrap">
+          <div class="day-key" aria-hidden="true">
+            <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+          </div>
+          <div id="habits"></div>
+        </div>
+      </section>
+
+      <!-- 04 Goals -->
+      <section class="module m-goals" aria-labelledby="lbl-goals">
+        <span class="index-no" aria-hidden="true">04</span>
+        <p class="eyebrow" id="lbl-goals">Goals</p>
+        <h2 class="headline">Progress to date</h2>
+        <div class="goals-list" id="goals"></div>
+      </section>
+
+      <!-- 05 Focus -->
+      <section class="module m-focus" aria-labelledby="lbl-focus">
+        <span class="index-no" aria-hidden="true">05</span>
+        <p class="eyebrow" id="lbl-focus">Focus</p>
+        <h2 class="headline">This week&rsquo;s focus</h2>
+        <p class="focus-body"><strong>Protect your mornings.</strong> Block 90 minutes before 9am for deep, uninterrupted work — no notifications, no meetings.</p>
+      </section>
+
+      <!-- 06 Quote -->
+      <section class="module m-quote" aria-labelledby="lbl-quote">
+        <span class="index-no" aria-hidden="true">06</span>
+        <p class="eyebrow" id="lbl-quote" style="display:inline-block;">Coda</p>
+        <div class="aphorism">
+          <blockquote id="quote">
+            <span id="quote-text"></span>
+            <span class="attribution" id="quote-author"></span>
+          </blockquote>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    /* ---------- keys ---------- */
+    var K_HABITS = "bloom-editorial-minimal-index-poster-habits";
+    var K_GOALS  = "bloom-editorial-minimal-index-poster-goals";
+
+    /* ---------- 01 Greeting + date ---------- */
+    (function () {
+      var now = new Date();
+      var h = now.getHours();
+      var g = h < 12 ? "Good Morning" : (h < 18 ? "Good Afternoon" : "Good Evening");
+      document.getElementById("greeting").textContent = g;
+      var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      document.getElementById("date-daynum").textContent = String(now.getDate()).padStart(2, "0");
+      document.getElementById("date-weekday").textContent = days[now.getDay()];
+    })();
+
+    /* ---------- 02 Mood (single-select) ---------- */
+    (function () {
+      var set = document.getElementById("mood-set");
+      var btns = Array.prototype.slice.call(set.querySelectorAll(".mood-btn"));
+      btns.forEach(function (b) {
+        b.addEventListener("click", function () {
+          btns.forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
+        });
+      });
+    })();
+
+    /* ---------- 03 Habits ---------- */
+    var HABIT_DEFAULTS = [
+      { name: "Meditate", days: [true, true, true, true, false, false, false] },
+      { name: "Read",     days: [true, true, false, true, true, false, false] },
+      { name: "Move",     days: [true, false, true, false, true, false, false] },
+      { name: "Hydrate",  days: [true, true, true, true, true, false, false] },
+      { name: "Journal",  days: [false, true, false, true, false, false, false] }
+    ];
+
+    function loadHabits() {
+      try {
+        var raw = JSON.parse(localStorage.getItem(K_HABITS));
+        if (!Array.isArray(raw) || raw.length !== 5) throw 0;
+        return raw.map(function (h, i) {
+          if (!h || typeof h.name !== "string" || !Array.isArray(h.days) || h.days.length !== 7) throw 0;
+          return { name: HABIT_DEFAULTS[i].name, days: h.days.map(function (d) { return !!d; }) };
+        });
+      } catch (e) {
+        return HABIT_DEFAULTS.map(function (h) { return { name: h.name, days: h.days.slice() }; });
+      }
+    }
+    function saveHabits(state) {
+      try { localStorage.setItem(K_HABITS, JSON.stringify(state)); } catch (e) {}
+    }
+
+    (function () {
+      var state = loadHabits();
+      var root = document.getElementById("habits");
+      var DAYNAMES = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+
+      state.forEach(function (habit, hi) {
+        var row = document.createElement("div");
+        row.className = "habit-row";
+
+        var head = document.createElement("div");
+        head.className = "habit-head";
+        var name = document.createElement("span");
+        name.className = "habit-name";
+        name.textContent = habit.name;
+        var count = document.createElement("span");
+        count.className = "habit-count";
+        head.appendChild(name);
+        head.appendChild(count);
+        row.appendChild(head);
+
+        var grid = document.createElement("div");
+        grid.className = "days";
+
+        function refreshCount() {
+          var n = habit.days.filter(Boolean).length;
+          count.textContent = n + "/7";
+        }
+
+        habit.days.forEach(function (done, di) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "day";
+          b.setAttribute("aria-pressed", done ? "true" : "false");
+          b.setAttribute("aria-label", habit.name + ", " + DAYNAMES[di] + (done ? ", done" : ", not done"));
+          b.addEventListener("click", function () {
+            habit.days[di] = !habit.days[di];
+            b.setAttribute("aria-pressed", habit.days[di] ? "true" : "false");
+            b.setAttribute("aria-label", habit.name + ", " + DAYNAMES[di] + (habit.days[di] ? ", done" : ", not done"));
+            refreshCount();
+            saveHabits(state);
+          });
+          grid.appendChild(b);
+        });
+
+        row.appendChild(grid);
+        root.appendChild(row);
+        refreshCount();
+      });
+    })();
+
+    /* ---------- 04 Goals (sliders) ---------- */
+    var GOAL_DEFAULTS = [
+      { label: "Read 20 books", value: 65 },
+      { label: "Save $10,000",  value: 40 },
+      { label: "Run 500 miles", value: 82 }
+    ];
+
+    function loadGoals() {
+      try {
+        var raw = JSON.parse(localStorage.getItem(K_GOALS));
+        if (!Array.isArray(raw) || raw.length !== 3) throw 0;
+        return raw.map(function (v, i) {
+          var n = Number(v);
+          if (!isFinite(n)) throw 0;
+          return { label: GOAL_DEFAULTS[i].label, value: Math.max(0, Math.min(100, Math.round(n))) };
+        });
+      } catch (e) {
+        return GOAL_DEFAULTS.map(function (g) { return { label: g.label, value: g.value }; });
+      }
+    }
+    function saveGoals(state) {
+      try { localStorage.setItem(K_GOALS, JSON.stringify(state.map(function (g) { return g.value; }))); } catch (e) {}
+    }
+
+    (function () {
+      var state = loadGoals();
+      var root = document.getElementById("goals");
+
+      state.forEach(function (goal, gi) {
+        var wrap = document.createElement("div");
+        wrap.className = "goal";
+
+        var head = document.createElement("div");
+        head.className = "goal-head";
+        var label = document.createElement("span");
+        label.className = "goal-label";
+        label.textContent = goal.label;
+        var pct = document.createElement("span");
+        pct.className = "goal-pct";
+        head.appendChild(label);
+        head.appendChild(pct);
+        wrap.appendChild(head);
+
+        var slider = document.createElement("div");
+        slider.className = "slider";
+        slider.setAttribute("role", "slider");
+        slider.setAttribute("tabindex", "0");
+        slider.setAttribute("aria-valuemin", "0");
+        slider.setAttribute("aria-valuemax", "100");
+        slider.setAttribute("aria-label", goal.label);
+
+        var track = document.createElement("div");
+        track.className = "slider-track";
+        var fill = document.createElement("div");
+        fill.className = "slider-fill";
+        var thumb = document.createElement("div");
+        thumb.className = "slider-thumb";
+        track.appendChild(fill);
+        track.appendChild(thumb);
+        slider.appendChild(track);
+        wrap.appendChild(slider);
+        root.appendChild(wrap);
+
+        function render() {
+          pct.textContent = goal.value + "%";
+          fill.style.width = goal.value + "%";
+          thumb.style.left = goal.value + "%";
+          slider.setAttribute("aria-valuenow", String(goal.value));
+          slider.setAttribute("aria-valuetext", goal.value + " percent");
+        }
+        function set(v, persist) {
+          v = Math.max(0, Math.min(100, Math.round(v)));
+          if (v !== goal.value) { goal.value = v; render(); if (persist) saveGoals(state); }
+          else if (persist) saveGoals(state);
+        }
+        function fromClientX(clientX) {
+          var r = track.getBoundingClientRect();
+          if (r.width <= 0) return;
+          set(((clientX - r.left) / r.width) * 100, true);
+        }
+
+        var dragging = false;
+        slider.addEventListener("pointerdown", function (e) {
+          dragging = true;
+          slider.setPointerCapture(e.pointerId);
+          fromClientX(e.clientX);
+          e.preventDefault();
+        });
+        slider.addEventListener("pointermove", function (e) {
+          if (dragging) fromClientX(e.clientX);
+        });
+        slider.addEventListener("pointerup", function (e) {
+          dragging = false;
+          try { slider.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+        slider.addEventListener("keydown", function (e) {
+          var handled = true;
+          switch (e.key) {
+            case "ArrowLeft": case "ArrowDown": set(goal.value - 5, true); break;
+            case "ArrowRight": case "ArrowUp": set(goal.value + 5, true); break;
+            case "Home": set(0, true); break;
+            case "End": set(100, true); break;
+            case "PageDown": set(goal.value - 10, true); break;
+            case "PageUp": set(goal.value + 10, true); break;
+            default: handled = false;
+          }
+          if (handled) e.preventDefault();
+        });
+
+        render();
+      });
+    })();
+
+    /* ---------- 06 Quote (random on load) ---------- */
+    (function () {
+      var QUOTES = [
+        { t: "Slow is smooth, and smooth is fast.", a: "Unknown" },
+        { t: "What you do every day matters more than what you do once in a while.", a: "Gretchen Rubin" },
+        { t: "Discipline is choosing between what you want now and what you want most.", a: "Abraham Lincoln" },
+        { t: "Small daily improvements are the key to staggering long-term results.", a: "James Clear" }
+      ];
+      var q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+      document.getElementById("quote-text").textContent = "“" + q.t + "”";
+      document.getElementById("quote-author").textContent = q.a;
+    })();
+  })();
+  </script>
+</body>
+</html>
