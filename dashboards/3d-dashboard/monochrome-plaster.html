@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monochrome Plaster — 3D Dashboard — BLOOM</title>
+<meta name="description" content="A near-white, tonal plaster dashboard where depth comes entirely from debossed wells and softly extruded edges — part of the BLOOM 3D Dashboard family.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22%23EFE9DF%22%2F%3E%3Crect%20x%3D%2214%22%20y%3D%2214%22%20width%3D%2236%22%20height%3D%2236%22%20rx%3D%2210%22%20fill%3D%22%23ECE4D6%22%2F%3E%3C%2Fsvg%3E">
+<style>
+  /* ---- Self-hosted Inter (normal + italic), no network dependency ---- */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-normal.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Inter';
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-italic.woff2') format('woff2');
+  }
+
+  :root {
+    --ground:   #EFE9DF;  /* page */
+    --ground-2: #E9E1D4;  /* page radial edge */
+    --card:     #F6F1E8;  /* raised surfaces */
+    --well:     #ECE4D6;  /* debossed insets */
+    --wall:     #E6DCCB;  /* extruded side-wall band */
+    --line:     #DED3C0;  /* hairline separators */
+    --sand:     #E4CBA8;  /* tonal accent fill */
+    --sand-2:   #D9B98C;  /* deeper tonal accent */
+    --ink:      #4F463D;  /* headings */
+    --ink-2:    #6E655C;  /* body / labels (>=4.5:1 on card/ground/well) */
+    --ink-3:    #8A8072;  /* faint meta */
+
+    --r-card: 22px;
+    --r-well: 18px;
+    --r-pill: 999px;
+
+    /* Barely-raised card + faint drop */
+    --raise:
+      0 1px 2px rgba(120,100,80,0.08),
+      0 14px 30px rgba(120,100,80,0.10),
+      inset 0 1px 1px rgba(255,255,255,0.9);
+    /* Extruded slab: solid band = physical edge, then soft cast */
+    --extrude:
+      0 1px 2px rgba(120,100,80,0.08),
+      0 14px 30px rgba(120,100,80,0.10),
+      inset 0 1px 1px rgba(255,255,255,0.9),
+      0 6px 0 var(--wall),
+      0 10px 16px rgba(120,100,80,0.15);
+    /* Signature debossed well */
+    --deboss:
+      inset 0 3px 6px rgba(150,130,105,0.28),
+      inset 0 -2px 3px rgba(255,255,255,0.7);
+    /* Deeper press (mood selected / filled cell recess) */
+    --deboss-deep:
+      inset 0 4px 8px rgba(150,130,105,0.38),
+      inset 0 -1px 2px rgba(255,255,255,0.55);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color: var(--ink-2);
+    background:
+      radial-gradient(115% 90% at 18% 6%, #F4EEE4 0%, var(--ground) 46%, var(--ground-2) 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding: 40px 22px 84px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 900px; margin: 0 auto; }
+
+  /* ---- Back link ---- */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 7px;
+    text-decoration: none; color: var(--ink-3);
+    font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
+    padding: 8px 14px; border-radius: var(--r-pill);
+    background: var(--card);
+    box-shadow: var(--raise);
+    transition: color .2s ease, transform .2s ease;
+    margin-bottom: 30px;
+  }
+  .back-link:hover { color: var(--ink); transform: translateY(-1px); }
+
+  /* ---- Layout ---- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+  .card {
+    grid-column: 1 / -1;
+    background: var(--card);
+    border-radius: var(--r-card);
+    box-shadow: var(--extrude);
+    padding: 26px 26px 28px;
+    margin-bottom: 6px; /* room for the extruded edge to read */
+  }
+  .card.half { grid-column: span 1; }
+
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink-3);
+    margin: 0 0 16px;
+  }
+
+  /* ---- Greeting header ---- */
+  .greet { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+  .greet-main { min-width: 0; }
+  .greet h1 {
+    font-size: clamp(26px, 6vw, 38px); font-weight: 800; letter-spacing: -0.02em;
+    color: var(--ink); margin: 0 0 4px; line-height: 1.1;
+  }
+  .greet .welcome { font-size: 17px; font-weight: 600; color: var(--ink-2); margin: 0 0 8px; }
+  .greet .subcopy { font-size: 14px; color: var(--ink-2); margin: 0; max-width: 42ch; }
+  .datestamp {
+    flex-shrink: 0; text-align: center;
+    background: var(--well); border-radius: var(--r-well);
+    box-shadow: var(--deboss);
+    padding: 12px 18px; min-width: 84px;
+  }
+  .datestamp .d-num { display: block; font-size: 30px; font-weight: 800; color: var(--ink); line-height: 1; }
+  .datestamp .d-day { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-top: 6px; }
+
+  /* ---- Mood ---- */
+  .mood-tray {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    background: var(--well); border-radius: var(--r-well);
+    box-shadow: var(--deboss);
+    padding: 10px;
+  }
+  .mood {
+    flex: 1 1 0; min-width: 58px;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    padding: 12px 6px; border: 0; cursor: pointer;
+    background: var(--card); color: var(--ink-2);
+    border-radius: 14px; box-shadow: var(--raise);
+    font-family: inherit; font-size: 12px; font-weight: 600;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+  }
+  .mood .emoji { font-size: 22px; line-height: 1; filter: saturate(.72); }
+  .mood:hover { transform: translateY(-1px); }
+  .mood[aria-pressed="true"] {
+    background: var(--sand);
+    color: var(--ink);
+    box-shadow: var(--deboss-deep);
+    transform: translateY(0);
+  }
+  .mood[aria-pressed="true"] .emoji { filter: none; }
+
+  /* ---- Habits ---- */
+  .habit { padding: 14px 0; border-top: 1px solid var(--line); }
+  .habit:first-of-type { border-top: 0; padding-top: 2px; }
+  .habit-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 10px; gap: 12px;
+  }
+  .habit-name { font-size: 15px; font-weight: 700; color: var(--ink); }
+  .habit-count { font-size: 12px; font-weight: 600; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+  .dow {
+    display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px; margin: 0 6px 5px;
+  }
+  .dow span {
+    text-align: center; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.06em; color: var(--ink-3);
+  }
+  .day-tray {
+    background: var(--well); border-radius: var(--r-well);
+    box-shadow: var(--deboss);
+    padding: 6px;
+  }
+  .days {
+    display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .day {
+    aspect-ratio: 1 / 1; min-height: 44px; max-height: 72px;
+    border: 0; padding: 0; cursor: pointer;
+    border-radius: 12px;
+    background: #E3DACB;
+    box-shadow: inset 0 2px 4px rgba(150,130,105,0.30), inset 0 -1px 1px rgba(255,255,255,0.55);
+    transition: background .16s ease, box-shadow .16s ease, transform .12s ease;
+    position: relative;
+  }
+  .day::after {
+    content: ""; position: absolute; inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(120% 120% at 30% 25%, rgba(255,255,255,0.5), rgba(255,255,255,0) 60%);
+    opacity: 0; transition: opacity .16s ease;
+  }
+  .day[aria-pressed="true"] {
+    background: linear-gradient(150deg, var(--sand) 0%, var(--sand-2) 100%);
+    box-shadow:
+      0 1px 1px rgba(120,100,80,0.10),
+      inset 0 1px 1px rgba(255,255,255,0.6),
+      inset 0 -2px 3px rgba(150,120,90,0.28);
+  }
+  .day[aria-pressed="true"]::after { opacity: 1; }
+  .day:hover { transform: translateY(-1px); }
+
+  /* ---- Goals ---- */
+  .goal { margin-top: 20px; }
+  .goal:first-of-type { margin-top: 4px; }
+  .goal-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 9px; gap: 12px;
+  }
+  .goal-label { font-size: 15px; font-weight: 700; color: var(--ink); }
+  .goal-val { font-size: 14px; font-weight: 700; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+  .slider {
+    position: relative; height: 26px; cursor: pointer;
+    border-radius: var(--r-pill);
+    background: var(--well);
+    box-shadow: var(--deboss);
+    padding: 0; /* track drawn via ::before inset */
+    touch-action: none;
+  }
+  .slider-fill {
+    position: absolute; top: 4px; bottom: 4px; left: 4px;
+    border-radius: var(--r-pill);
+    background: linear-gradient(180deg, var(--sand) 0%, var(--sand-2) 100%);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.5), inset 0 -2px 3px rgba(150,120,90,0.30);
+    width: 40%;
+    pointer-events: none;
+    min-width: 0;
+    transition: width .12s ease;
+  }
+  .slider-thumb {
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    width: 22px; height: 22px; border-radius: 50%;
+    background: radial-gradient(120% 120% at 32% 28%, #FBF7EF 0%, #ECE1CE 65%, #DFCFB4 100%);
+    box-shadow:
+      0 1px 2px rgba(120,100,80,0.25),
+      0 3px 6px rgba(120,100,80,0.20),
+      inset 0 1px 1px rgba(255,255,255,0.9);
+    pointer-events: none;
+    left: 40%;
+    transition: left .12s ease;
+  }
+
+  /* ---- Weekly focus ---- */
+  .focus-body { font-size: 15px; color: var(--ink-2); margin: 0; }
+  .focus-body strong { color: var(--ink); font-weight: 700; }
+
+  /* ---- Quote ---- */
+  .quote-card { text-align: left; }
+  .quote-mark {
+    font-size: 44px; line-height: 0.6; color: var(--sand-2);
+    font-weight: 800; display: block; margin-bottom: 4px; height: 26px;
+  }
+  blockquote { margin: 0; }
+  blockquote p {
+    font-style: italic; font-size: 18px; line-height: 1.5;
+    color: var(--ink); margin: 0 0 12px; font-weight: 500;
+  }
+  blockquote cite {
+    font-style: normal; font-size: 13px; font-weight: 600;
+    color: var(--ink-3); letter-spacing: 0.02em;
+  }
+
+  /* ---- Focus ring ---- */
+  a:focus-visible, button:focus-visible, [role="slider"]:focus-visible {
+    outline: 2px solid var(--sand-2);
+    outline-offset: 3px;
+  }
+  .day:focus-visible { outline-offset: 2px; }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 620px) {
+    body { padding: 24px 10px 60px; }
+    .grid { gap: 16px; }
+    .card { grid-column: 1 / -1; padding: 18px 12px 20px; }
+    .card.half { grid-column: 1 / -1; }
+    .datestamp { padding: 10px 14px; min-width: 74px; }
+    .mood { min-width: 46px; padding: 10px 2px; font-size: 11px; }
+    .mood .emoji { font-size: 19px; }
+    .day-tray { padding: 4px; }
+    .days, .dow { gap: 3px; }
+    .dow { margin: 0 4px 5px; }
+    .day { border-radius: 10px; }
+  }
+  @media (max-width: 380px) {
+    .days, .dow { gap: 2px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.001ms !important;
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back-link" href="index.html">&larr; All 3D Dashboard designs</a>
+
+    <main class="grid">
+      <!-- Greeting -->
+      <section class="card" aria-labelledby="greet-h">
+        <div class="greet">
+          <div class="greet-main">
+            <h1 id="greet-h"><span id="greeting">Good Morning</span></h1>
+            <p class="welcome">Welcome back, Ellery</p>
+            <p class="subcopy">A quiet, unhurried surface for today. Nothing loud — just soft light and the shape of your day pressed gently in.</p>
+          </div>
+          <div class="datestamp" aria-hidden="true">
+            <span class="d-num" id="date-num">00</span>
+            <span class="d-day" id="date-day">DAY</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Mood -->
+      <section class="card half" aria-labelledby="mood-label">
+        <h2 class="section-label" id="mood-label">How are you, softly?</h2>
+        <div class="mood-tray" role="group" aria-label="Mood check-in" id="mood-group">
+          <button type="button" class="mood" data-mood="Low"   aria-pressed="false"><span class="emoji" aria-hidden="true">😔</span>Low</button>
+          <button type="button" class="mood" data-mood="Flat"  aria-pressed="false"><span class="emoji" aria-hidden="true">😐</span>Flat</button>
+          <button type="button" class="mood" data-mood="Okay"  aria-pressed="true"><span class="emoji" aria-hidden="true">🙂</span>Okay</button>
+          <button type="button" class="mood" data-mood="Good"  aria-pressed="false"><span class="emoji" aria-hidden="true">😄</span>Good</button>
+          <button type="button" class="mood" data-mood="Great" aria-pressed="false"><span class="emoji" aria-hidden="true">🤩</span>Great</button>
+        </div>
+      </section>
+
+      <!-- Weekly focus -->
+      <section class="card half" aria-labelledby="focus-label">
+        <h2 class="section-label" id="focus-label">This week's focus</h2>
+        <p class="focus-body"><strong>Protect your mornings.</strong> Block 90 minutes before 9am for deep, uninterrupted work — no notifications, no meetings.</p>
+      </section>
+
+      <!-- Habits -->
+      <section class="card" aria-labelledby="habits-label">
+        <h2 class="section-label" id="habits-label">Habits, pressed in</h2>
+        <div id="habits"></div>
+      </section>
+
+      <!-- Goals -->
+      <section class="card" aria-labelledby="goals-label">
+        <h2 class="section-label" id="goals-label">Goal progress</h2>
+        <div id="goals"></div>
+      </section>
+
+      <!-- Quote -->
+      <section class="card quote-card" aria-label="Motivational quote">
+        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+        <blockquote>
+          <p id="quote-text"></p>
+          <cite id="quote-author"></cite>
+        </blockquote>
+      </section>
+    </main>
+  </div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var HABIT_KEY = "bloom-3d-dashboard-monochrome-plaster-habits";
+    var GOAL_KEY  = "bloom-3d-dashboard-monochrome-plaster-goals";
+
+    /* ---------- Greeting + date ---------- */
+    var now = new Date();
+    var h = now.getHours();
+    var greeting = h < 12 ? "Good Morning" : (h < 18 ? "Good Afternoon" : "Good Evening");
+    document.getElementById("greeting").textContent = greeting;
+
+    var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    document.getElementById("date-num").textContent = String(now.getDate()).padStart(2, "0");
+    document.getElementById("date-day").textContent = days[now.getDay()];
+
+    /* ---------- Quote ---------- */
+    var QUOTES = [
+      { t: "Slow is smooth, and smooth is fast.", a: "Unknown" },
+      { t: "What you do every day matters more than what you do once in a while.", a: "Gretchen Rubin" },
+      { t: "Discipline is choosing between what you want now and what you want most.", a: "Abraham Lincoln" },
+      { t: "Small daily improvements are the key to staggering long-term results.", a: "James Clear" }
+    ];
+    var q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    document.getElementById("quote-text").textContent = "“" + q.t + "”";
+    document.getElementById("quote-author").textContent = "— " + q.a;
+
+    /* ---------- Habits ---------- */
+    var HABIT_DEFAULTS = {
+      "Meditate": [true, true, true, true, false, false, false],
+      "Read":     [true, true, false, true, true, false, false],
+      "Move":     [true, false, true, false, true, false, false],
+      "Hydrate":  [true, true, true, true, true, false, false],
+      "Journal":  [false, true, false, true, false, false, false]
+    };
+    var HABIT_ORDER = ["Meditate", "Read", "Move", "Hydrate", "Journal"];
+    var DOW = ["M", "T", "W", "T", "F", "S", "S"];
+
+    function loadHabits() {
+      try {
+        var raw = JSON.parse(localStorage.getItem(HABIT_KEY));
+        if (!raw || typeof raw !== "object") throw 0;
+        var out = {};
+        for (var i = 0; i < HABIT_ORDER.length; i++) {
+          var name = HABIT_ORDER[i];
+          var arr = raw[name];
+          if (!Array.isArray(arr) || arr.length !== 7) throw 0;
+          out[name] = arr.map(function (v) { return !!v; });
+        }
+        return out;
+      } catch (e) {
+        return JSON.parse(JSON.stringify(HABIT_DEFAULTS));
+      }
+    }
+    function saveHabits() {
+      try { localStorage.setItem(HABIT_KEY, JSON.stringify(habits)); } catch (e) {}
+    }
+
+    var habits = loadHabits();
+
+    function habitCount(name) {
+      return habits[name].reduce(function (n, v) { return n + (v ? 1 : 0); }, 0);
+    }
+
+    function renderHabits() {
+      var host = document.getElementById("habits");
+      host.innerHTML = "";
+      HABIT_ORDER.forEach(function (name) {
+        var row = document.createElement("div");
+        row.className = "habit";
+
+        var head = document.createElement("div");
+        head.className = "habit-head";
+        var nm = document.createElement("span");
+        nm.className = "habit-name";
+        nm.textContent = name;
+        var ct = document.createElement("span");
+        ct.className = "habit-count";
+        ct.textContent = habitCount(name) + " / 7";
+        head.appendChild(nm); head.appendChild(ct);
+        row.appendChild(head);
+
+        var dow = document.createElement("div");
+        dow.className = "dow";
+        dow.setAttribute("aria-hidden", "true");
+        DOW.forEach(function (d) {
+          var s = document.createElement("span");
+          s.textContent = d;
+          dow.appendChild(s);
+        });
+        row.appendChild(dow);
+
+        var tray = document.createElement("div");
+        tray.className = "day-tray";
+        var grid = document.createElement("div");
+        grid.className = "days";
+
+        habits[name].forEach(function (filled, idx) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "day";
+          b.setAttribute("aria-pressed", filled ? "true" : "false");
+          b.setAttribute("aria-label", name + " — day " + (idx + 1) + (filled ? ", done" : ", not done"));
+          b.addEventListener("click", function () {
+            habits[name][idx] = !habits[name][idx];
+            var on = habits[name][idx];
+            b.setAttribute("aria-pressed", on ? "true" : "false");
+            b.setAttribute("aria-label", name + " — day " + (idx + 1) + (on ? ", done" : ", not done"));
+            ct.textContent = habitCount(name) + " / 7";
+            saveHabits();
+          });
+          grid.appendChild(b);
+        });
+        tray.appendChild(grid);
+        row.appendChild(tray);
+        host.appendChild(row);
+      });
+    }
+    renderHabits();
+
+    /* ---------- Mood ---------- */
+    var moodBtns = Array.prototype.slice.call(document.querySelectorAll(".mood"));
+    moodBtns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        moodBtns.forEach(function (b) { b.setAttribute("aria-pressed", "false"); });
+        btn.setAttribute("aria-pressed", "true");
+      });
+    });
+
+    /* ---------- Goals / sliders ---------- */
+    var GOAL_DEFS = [
+      { id: "read", label: "Read 20 books", value: 65 },
+      { id: "save", label: "Save $10,000",  value: 40 },
+      { id: "run",  label: "Run 500 miles", value: 82 }
+    ];
+
+    function loadGoals() {
+      var vals = {};
+      GOAL_DEFS.forEach(function (g) { vals[g.id] = g.value; });
+      try {
+        var raw = JSON.parse(localStorage.getItem(GOAL_KEY));
+        if (!raw || typeof raw !== "object") throw 0;
+        GOAL_DEFS.forEach(function (g) {
+          var v = raw[g.id];
+          if (typeof v === "number" && isFinite(v)) {
+            vals[g.id] = Math.max(0, Math.min(100, Math.round(v)));
+          }
+        });
+      } catch (e) { /* fall back to defaults */ }
+      return vals;
+    }
+    var goalVals = loadGoals();
+    function saveGoals() {
+      try { localStorage.setItem(GOAL_KEY, JSON.stringify(goalVals)); } catch (e) {}
+    }
+
+    function renderGoals() {
+      var host = document.getElementById("goals");
+      host.innerHTML = "";
+      GOAL_DEFS.forEach(function (g) {
+        var val = goalVals[g.id];
+
+        var wrap = document.createElement("div");
+        wrap.className = "goal";
+
+        var head = document.createElement("div");
+        head.className = "goal-head";
+        var lab = document.createElement("span");
+        lab.className = "goal-label";
+        lab.textContent = g.label;
+        var vout = document.createElement("span");
+        vout.className = "goal-val";
+        vout.textContent = val + "%";
+        head.appendChild(lab); head.appendChild(vout);
+        wrap.appendChild(head);
+
+        var slider = document.createElement("div");
+        slider.className = "slider";
+        slider.setAttribute("role", "slider");
+        slider.setAttribute("tabindex", "0");
+        slider.setAttribute("aria-valuemin", "0");
+        slider.setAttribute("aria-valuemax", "100");
+        slider.setAttribute("aria-valuenow", String(val));
+        slider.setAttribute("aria-label", g.label + " progress");
+
+        var fill = document.createElement("div");
+        fill.className = "slider-fill";
+        var thumb = document.createElement("div");
+        thumb.className = "slider-thumb";
+        slider.appendChild(fill);
+        slider.appendChild(thumb);
+        wrap.appendChild(slider);
+        host.appendChild(wrap);
+
+        function paint(v) {
+          fill.style.width = "calc(" + v + "% - 4px)";
+          thumb.style.left = v + "%";
+          vout.textContent = v + "%";
+          slider.setAttribute("aria-valuenow", String(v));
+          slider.setAttribute("aria-valuetext", v + " percent");
+        }
+        paint(val);
+
+        function setVal(v, persist) {
+          v = Math.max(0, Math.min(100, Math.round(v)));
+          goalVals[g.id] = v;
+          paint(v);
+          if (persist) saveGoals();
+        }
+
+        function valueFromEvent(clientX) {
+          var r = slider.getBoundingClientRect();
+          var pct = (clientX - r.left) / r.width * 100;
+          return pct;
+        }
+
+        var dragging = false;
+        slider.addEventListener("pointerdown", function (e) {
+          dragging = true;
+          slider.setPointerCapture(e.pointerId);
+          setVal(valueFromEvent(e.clientX), false);
+          e.preventDefault();
+        });
+        slider.addEventListener("pointermove", function (e) {
+          if (!dragging) return;
+          setVal(valueFromEvent(e.clientX), false);
+        });
+        function endDrag(e) {
+          if (!dragging) return;
+          dragging = false;
+          try { slider.releasePointerCapture(e.pointerId); } catch (err) {}
+          saveGoals();
+        }
+        slider.addEventListener("pointerup", endDrag);
+        slider.addEventListener("pointercancel", endDrag);
+
+        slider.addEventListener("keydown", function (e) {
+          var cur = goalVals[g.id], nv = cur, handled = true;
+          switch (e.key) {
+            case "ArrowRight": case "ArrowUp":   nv = cur + 5; break;
+            case "ArrowLeft":  case "ArrowDown": nv = cur - 5; break;
+            case "Home": nv = 0; break;
+            case "End":  nv = 100; break;
+            case "PageUp":   nv = cur + 10; break;
+            case "PageDown": nv = cur - 10; break;
+            default: handled = false;
+          }
+          if (handled) { e.preventDefault(); setVal(nv, true); }
+        });
+      });
+    }
+    renderGoals();
+  })();
+  </script>
+</body>
+</html>
