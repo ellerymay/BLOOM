@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warm Clay — 3D Dashboard | BLOOM</title>
+<meta name="description" content="Warm Clay — a molded matte-clay personal life-OS dashboard with a mood check-in, habit tracker, and goal sliders. A single dependency-free HTML/CSS file from the BLOOM gallery.">
+<meta property="og:title" content="Warm Clay — 3D Dashboard | BLOOM">
+<meta property="og:description" content="A molded, tactile clay-and-plaster life-OS dashboard — soft top-left light, domed knobs, and debossed grooves. One dependency-free HTML/CSS file.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f0beb0%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23efa890%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2228%22%20fill%3D%22url%28%23g%29%22%2F%3E%3C%2Fsvg%3E">
+<style>
+  /* Self-hosted Inter — no network dependency, fully offline. */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-normal.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Inter';
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-italic.woff2') format('woff2');
+  }
+
+  :root {
+    /* --- Warm Clay palette --- */
+    --ground: #EAE0D4;      /* warm greige page ground */
+    --ground-2: #E4C7BA;    /* blush ground for corner bleed */
+    --card: #FBF6F0;        /* warm off-white card base (never pure white) */
+    --tile: #ECE4D6;        /* recessed tray / debossed well fill */
+    --groove: #EFE6DB;      /* slider channel fill */
+    --text: #4A423C;        /* warm dark brown-grey (never pure black) */
+    --text-muted: #6B6157;  /* muted warm grey, still >=4.5:1 on card */
+
+    /* accents */
+    --peach: #F0BEB0;
+    --periwinkle: #9B93D6;
+    --mint: #B7D9CE;
+    --butter: #F3D8A6;
+    --coral: #EFA890;
+
+    --radius-card: 28px;
+    --radius-tile: 20px;
+    --radius-chip: 14px;
+
+    /* soft top-left studio light — highlights top/left, self-shadow bottom */
+    --contact: rgba(74, 66, 60, 0.10);
+    --ambient: rgba(74, 66, 60, 0.10);
+    --top-hi: rgba(255, 255, 255, 0.85);
+    --bottom-shade: rgba(180, 150, 130, 0.18);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    /* a molded plaster field: warm greige lit from the upper-left, a soft
+       blush bleeding up from the lower-right corner. Flat, matte, no gloss. */
+    background:
+      radial-gradient(130% 100% at 88% 100%, rgba(228, 199, 186, 0.55) 0%, rgba(228, 199, 186, 0) 46%),
+      radial-gradient(90% 80% at 8% 4%, #F3EBE0 0%, rgba(243, 235, 224, 0) 52%),
+      var(--ground);
+    background-attachment: fixed;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 44px 24px 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 34px;
+  }
+
+  .back-link {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s ease;
+  }
+  .back-link:hover { color: var(--text); }
+  .back-link:focus-visible {
+    outline: 2px solid var(--periwinkle);
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+
+  .brand {
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 24px;
+  }
+
+  /* ---- The load-bearing clay card ------------------------------------
+     A matte off-white slab molded out of the surface: tight contact
+     shadow + diffuse ambient float lift it off the page, a soft top
+     highlight catches the light on its rounded top edge, and a faint
+     bottom self-shadow curls the lower lip so it reads as a solid,
+     not a printed rectangle. */
+  .card {
+    position: relative;
+    background: linear-gradient(145deg, #FEFBF7, #F4ECE2);
+    border-radius: var(--radius-card);
+    box-shadow:
+      0 2px 3px var(--contact),
+      0 18px 40px var(--ambient),
+      inset 0 2px 1px var(--top-hi),
+      inset 0 -3px 4px var(--bottom-shade);
+    padding: 30px;
+  }
+
+  /* ---- Greeting ---- */
+  .greeting {
+    grid-column: span 8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .greeting-text .eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+  }
+  .greeting-text h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    line-height: 1.18;
+  }
+  .greeting-text p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  /* ---- Domed clay knob (avatar, mood domes, slider handle) ----
+     radial highlight top-left, gummy self-shadow lower-right. */
+  .dome {
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #FFFFFF, var(--peach) 75%);
+    box-shadow:
+      0 6px 10px rgba(74, 66, 60, 0.18),
+      inset 0 -3px 5px rgba(150, 90, 80, 0.25),
+      inset 0 3px 4px rgba(255, 255, 255, 0.7);
+  }
+
+  .avatar {
+    width: 84px;
+    height: 84px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: 800;
+    color: #7a3f33;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
+  }
+
+  /* ---- Date tile ---- */
+  .date {
+    grid-column: span 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 4px;
+  }
+  .date .day-num {
+    font-size: 46px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .date .day-name {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ---- Section headers ---- */
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0 0 20px;
+  }
+
+  /* ---- Mood check-in ---- */
+  .mood { grid-column: span 12; }
+
+  .mood-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .mood-btn {
+    flex: 1 1 84px;
+    min-width: 84px;
+    background: none;
+    border: none;
+    padding: 6px 4px 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border-radius: var(--radius-tile);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mood-btn:focus-visible {
+    outline: 2px solid var(--periwinkle);
+    outline-offset: 3px;
+  }
+
+  /* each mood is a clay dome; inactive domes are neutral plaster,
+     the active one is glazed in peach and sits slightly proud. */
+  .mood-btn .mood-dome {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    line-height: 1;
+    background: radial-gradient(circle at 35% 30%, #FFFFFF, #E7DCCC 78%);
+    box-shadow:
+      0 5px 9px rgba(74, 66, 60, 0.16),
+      inset 0 -3px 5px rgba(150, 120, 100, 0.22),
+      inset 0 3px 4px rgba(255, 255, 255, 0.8);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .mood-btn .label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: color 0.18s ease;
+  }
+  .mood-btn:hover .mood-dome { transform: translateY(-2px); }
+
+  .mood-btn.active .mood-dome {
+    background: radial-gradient(circle at 35% 30%, #FFFFFF, var(--peach) 75%);
+    box-shadow:
+      0 7px 12px rgba(74, 66, 60, 0.20),
+      inset 0 -3px 5px rgba(150, 90, 80, 0.28),
+      inset 0 3px 4px rgba(255, 255, 255, 0.72);
+    transform: translateY(-2px);
+  }
+  .mood-btn.active .label { color: #96503D; }
+
+  /* ---- Habit tracker ---- */
+  .habits { grid-column: span 7; }
+
+  .habit-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    row-gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(120, 100, 80, 0.14);
+  }
+  .habit-row:first-of-type { padding-top: 4px; }
+  .habit-row:last-child { border-bottom: none; padding-bottom: 4px; }
+
+  .habit-name {
+    font-size: 14px;
+    font-weight: 600;
+    width: 96px;
+    flex-shrink: 0;
+  }
+
+  /* recessed tray: the dot-grid nests in a debossed well so the beads
+     look pressed into a shallow clay dish. */
+  .dot-tray {
+    background: var(--tile);
+    border-radius: var(--radius-tile);
+    padding: 8px;
+    box-shadow:
+      inset 0 3px 6px rgba(150, 130, 105, 0.28),
+      inset 0 -2px 3px rgba(255, 255, 255, 0.7);
+  }
+
+  .dot-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-width: 100%;
+  }
+
+  /* empty day = a small debossed well carved into the tray */
+  .dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    background: radial-gradient(circle at 60% 66%, #EFE7DA 0%, #E1D6C5 100%);
+    box-shadow:
+      inset 0 3px 5px rgba(150, 125, 100, 0.34),
+      inset 0 -2px 3px rgba(255, 255, 255, 0.72);
+    transition: transform 0.15s ease;
+  }
+
+  /* filled day = a raised clay bead with a top-left hotspot */
+  .dot.filled {
+    background: radial-gradient(circle at 35% 30%, #FFFFFF, var(--coral) 78%);
+    box-shadow:
+      0 4px 7px rgba(74, 66, 60, 0.20),
+      inset 0 -3px 4px rgba(150, 80, 70, 0.30),
+      inset 0 3px 4px rgba(255, 255, 255, 0.7);
+  }
+  .dot:hover { transform: translateY(-1px); }
+  .dot:focus-visible {
+    outline: 2px solid var(--periwinkle);
+    outline-offset: 2px;
+  }
+
+  /* ---- Goal progress ---- */
+  .goals { grid-column: span 5; }
+
+  .goal-item { margin-bottom: 26px; }
+  .goal-item:last-child { margin-bottom: 0; }
+
+  .goal-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .goal-label .pct { color: #96503D; font-weight: 700; }
+
+  /* debossed groove: a channel pressed into the clay */
+  .slider {
+    position: relative;
+    height: 20px;
+    border-radius: 999px;
+    background: var(--groove);
+    box-shadow:
+      inset 0 2px 4px rgba(150, 120, 100, 0.25),
+      inset 0 -1px 1px rgba(255, 255, 255, 0.6);
+    padding: 3px;
+    cursor: pointer;
+    touch-action: none;
+  }
+  .slider:focus-visible {
+    outline: 2px solid var(--periwinkle);
+    outline-offset: 4px;
+  }
+
+  /* a clay rod sitting in the groove — domed, catching the top-left light */
+  .slider-fill {
+    position: relative;
+    height: 100%;
+    min-width: 14px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--butter) 30%, var(--coral) 100%);
+    box-shadow:
+      0 2px 4px rgba(74, 66, 60, 0.22),
+      inset 0 2px 2px rgba(255, 255, 255, 0.7),
+      inset 0 -2px 3px rgba(150, 90, 70, 0.28);
+  }
+  /* domed handle knob riding the end of the rod */
+  .slider-fill::after {
+    content: "";
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #FFFFFF, var(--coral) 75%);
+    box-shadow:
+      0 4px 7px rgba(74, 66, 60, 0.24),
+      inset 0 -3px 4px rgba(150, 80, 70, 0.30),
+      inset 0 3px 4px rgba(255, 255, 255, 0.72);
+  }
+
+  /* ---- Weekly focus ---- */
+  .focus {
+    grid-column: span 7;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+  .focus .icon-dome {
+    width: 68px;
+    height: 68px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    color: #4a5240;
+    background: radial-gradient(circle at 35% 30%, #FFFFFF, var(--mint) 78%);
+    box-shadow:
+      0 6px 10px rgba(74, 66, 60, 0.18),
+      inset 0 -3px 5px rgba(90, 130, 115, 0.28),
+      inset 0 3px 4px rgba(255, 255, 255, 0.72);
+    border-radius: 50%;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+  }
+  .focus-copy h3 {
+    margin: 0 0 8px;
+    font-size: 19px;
+    font-weight: 700;
+  }
+  .focus-copy p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ---- Quote ---- */
+  .quote {
+    grid-column: span 5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 14px;
+  }
+  .quote blockquote {
+    margin: 0;
+    font-size: 17px;
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .quote cite {
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 860px) {
+    .greeting, .date, .habits, .goals, .focus, .quote, .mood {
+      grid-column: span 12;
+    }
+    .card { padding: 24px; }
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 32px 16px 64px; }
+    .grid { gap: 18px; }
+    .habit-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .habit-name { width: auto; }
+    /* fill the row so the 7-dot grid wraps instead of overflowing on phones */
+    .dot-tray { width: 100%; }
+    .greeting { flex-direction: column-reverse; align-items: flex-start; }
+    .greeting-text h1 { font-size: 28px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.001ms !important;
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top-nav">
+      <a class="back-link" href="index.html">&larr; All 3D Dashboard designs</a>
+      <div class="brand">Warm Clay</div>
+    </div>
+
+    <div class="grid">
+      <section class="card greeting">
+        <div class="greeting-text">
+          <div class="eyebrow" id="greeting-eyebrow">Good Morning</div>
+          <h1>Welcome back, Ellery</h1>
+          <p>Everything here is hand-shaped and warm — settle in and mold your day.</p>
+        </div>
+        <div class="dome avatar" aria-hidden="true">E</div>
+      </section>
+
+      <section class="card date">
+        <div class="day-num" id="day-num">04</div>
+        <div class="day-name" id="day-name">Saturday</div>
+      </section>
+
+      <section class="card mood">
+        <p class="section-title">Mood check-in</p>
+        <div class="mood-row" id="mood-row" role="group" aria-label="How are you feeling?">
+          <button class="mood-btn" type="button" data-mood="low" aria-pressed="false"><span class="mood-dome" aria-hidden="true">😔</span><span class="label">Low</span></button>
+          <button class="mood-btn" type="button" data-mood="flat" aria-pressed="false"><span class="mood-dome" aria-hidden="true">😐</span><span class="label">Flat</span></button>
+          <button class="mood-btn active" type="button" data-mood="okay" aria-pressed="true"><span class="mood-dome" aria-hidden="true">🙂</span><span class="label">Okay</span></button>
+          <button class="mood-btn" type="button" data-mood="good" aria-pressed="false"><span class="mood-dome" aria-hidden="true">😄</span><span class="label">Good</span></button>
+          <button class="mood-btn" type="button" data-mood="great" aria-pressed="false"><span class="mood-dome" aria-hidden="true">🤩</span><span class="label">Great</span></button>
+        </div>
+      </section>
+
+      <section class="card habits">
+        <p class="section-title">Habit tracker</p>
+        <div class="habit-row" data-habit="Meditate">
+          <span class="habit-name">Meditate</span>
+          <div class="dot-tray"><div class="dot-grid"></div></div>
+        </div>
+        <div class="habit-row" data-habit="Read">
+          <span class="habit-name">Read</span>
+          <div class="dot-tray"><div class="dot-grid"></div></div>
+        </div>
+        <div class="habit-row" data-habit="Move">
+          <span class="habit-name">Move</span>
+          <div class="dot-tray"><div class="dot-grid"></div></div>
+        </div>
+        <div class="habit-row" data-habit="Hydrate">
+          <span class="habit-name">Hydrate</span>
+          <div class="dot-tray"><div class="dot-grid"></div></div>
+        </div>
+        <div class="habit-row" data-habit="Journal">
+          <span class="habit-name">Journal</span>
+          <div class="dot-tray"><div class="dot-grid"></div></div>
+        </div>
+      </section>
+
+      <section class="card goals">
+        <p class="section-title">Goal progress</p>
+        <div class="goal-item" data-goal="Read 20 books">
+          <div class="goal-label"><span>Read 20 books</span><span class="pct">65%</span></div>
+          <div class="slider" role="slider" tabindex="0" aria-label="Read 20 books progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="65"><div class="slider-fill" style="width:65%"></div></div>
+        </div>
+        <div class="goal-item" data-goal="Save $10,000">
+          <div class="goal-label"><span>Save $10,000</span><span class="pct">40%</span></div>
+          <div class="slider" role="slider" tabindex="0" aria-label="Save $10,000 progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40"><div class="slider-fill" style="width:40%"></div></div>
+        </div>
+        <div class="goal-item" data-goal="Run 500 miles">
+          <div class="goal-label"><span>Run 500 miles</span><span class="pct">82%</span></div>
+          <div class="slider" role="slider" tabindex="0" aria-label="Run 500 miles progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="82"><div class="slider-fill" style="width:82%"></div></div>
+        </div>
+      </section>
+
+      <section class="card focus">
+        <div class="icon-dome" aria-hidden="true">✦</div>
+        <div class="focus-copy">
+          <h3>This week's focus</h3>
+          <p>Protect your mornings. Block 90 minutes before 9am for deep, uninterrupted work — no notifications, no meetings.</p>
+        </div>
+      </section>
+
+      <section class="card quote">
+        <blockquote id="quote-text">"Slow is smooth, and smooth is fast."</blockquote>
+        <cite id="quote-author">— Unknown</cite>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // ---- Greeting + date, computed once at load (offline, no network) ----
+    const now = new Date();
+    const hour = now.getHours();
+    document.getElementById('greeting-eyebrow').textContent =
+      hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+
+    const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    document.getElementById('day-num').textContent = String(now.getDate()).padStart(2, '0');
+    document.getElementById('day-name').textContent = dayNames[now.getDay()];
+
+    // ---- Habit defaults (exact fill patterns) ----
+    const HABIT_DEFAULTS = {
+      'Meditate': [true, true, true, true, false, false, false],
+      'Read':     [true, true, false, true, true, false, false],
+      'Move':     [true, false, true, false, true, false, false],
+      'Hydrate':  [true, true, true, true, true, false, false],
+      'Journal':  [false, true, false, true, false, false, false]
+    };
+    const GOAL_DEFAULTS = {
+      'Read 20 books': 65,
+      'Save $10,000': 40,
+      'Run 500 miles': 82
+    };
+
+    const HABITS_KEY = 'bloom-3d-dashboard-warm-clay-habits';
+    const GOALS_KEY = 'bloom-3d-dashboard-warm-clay-goals';
+
+    // ---- Mood selection (single-select toggle group, no persistence) ----
+    document.getElementById('mood-row').addEventListener('click', (e) => {
+      const btn = e.target.closest('.mood-btn');
+      if (!btn) return;
+      document.querySelectorAll('.mood-btn').forEach((b) => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+    });
+
+    // ---- Habit tracker: build grid, click-to-toggle, persist ----
+    function loadHabitState() {
+      try {
+        const raw = localStorage.getItem(HABITS_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object') return null;
+        // validate shape against defaults; fall back if anything is off
+        const state = {};
+        for (const name of Object.keys(HABIT_DEFAULTS)) {
+          const days = parsed[name];
+          if (!Array.isArray(days) || days.length !== 7) return null;
+          state[name] = days.map(Boolean);
+        }
+        return state;
+      } catch (err) {
+        return null;
+      }
+    }
+
+    const habitState = loadHabitState() ||
+      Object.fromEntries(Object.entries(HABIT_DEFAULTS).map(([k, v]) => [k, v.slice()]));
+
+    function saveHabitState() {
+      try { localStorage.setItem(HABITS_KEY, JSON.stringify(habitState)); }
+      catch (err) { /* storage unavailable — state just won't persist */ }
+    }
+
+    document.querySelectorAll('.habit-row').forEach((row) => {
+      const name = row.dataset.habit;
+      const days = habitState[name];
+      const grid = row.querySelector('.dot-grid');
+      days.forEach((filled, i) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'dot' + (filled ? ' filled' : '');
+        dot.setAttribute('aria-pressed', String(filled));
+        dot.setAttribute('aria-label', name + ', day ' + (i + 1));
+        dot.addEventListener('click', () => {
+          const next = !dot.classList.contains('filled');
+          dot.classList.toggle('filled', next);
+          dot.setAttribute('aria-pressed', String(next));
+          habitState[name][i] = next;
+          saveHabitState();
+        });
+        grid.appendChild(dot);
+      });
+    });
+
+    // ---- Goal progress: click / drag / keyboard slider, persist ----
+    function loadGoalState() {
+      try {
+        const raw = localStorage.getItem(GOALS_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object') return null;
+        const state = {};
+        for (const label of Object.keys(GOAL_DEFAULTS)) {
+          const v = parsed[label];
+          if (typeof v !== 'number' || !isFinite(v)) return null;
+          state[label] = Math.max(0, Math.min(100, Math.round(v)));
+        }
+        return state;
+      } catch (err) {
+        return null;
+      }
+    }
+
+    const goalState = loadGoalState() || Object.assign({}, GOAL_DEFAULTS);
+
+    function saveGoalState() {
+      try { localStorage.setItem(GOALS_KEY, JSON.stringify(goalState)); }
+      catch (err) { /* storage unavailable — state just won't persist */ }
+    }
+
+    function setGoalPercent(item, pct, persist) {
+      const clamped = Math.max(0, Math.min(100, Math.round(pct)));
+      const label = item.dataset.goal;
+      item.querySelector('.slider-fill').style.width = clamped + '%';
+      item.querySelector('.pct').textContent = clamped + '%';
+      item.querySelector('.slider').setAttribute('aria-valuenow', String(clamped));
+      goalState[label] = clamped;
+      if (persist) saveGoalState();
+    }
+
+    function pctFromClientX(slider, clientX) {
+      const rect = slider.getBoundingClientRect();
+      if (!rect.width) return 0;
+      return ((clientX - rect.left) / rect.width) * 100;
+    }
+
+    document.querySelectorAll('.goal-item').forEach((item) => {
+      const slider = item.querySelector('.slider');
+      // apply any persisted value on load
+      setGoalPercent(item, goalState[item.dataset.goal], false);
+
+      let dragging = false;
+      const updateFromPointer = (e) => setGoalPercent(item, pctFromClientX(slider, e.clientX), true);
+
+      slider.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        slider.setPointerCapture(e.pointerId);
+        updateFromPointer(e);
+      });
+      slider.addEventListener('pointermove', (e) => { if (dragging) updateFromPointer(e); });
+      slider.addEventListener('pointerup', () => { dragging = false; });
+      slider.addEventListener('pointercancel', () => { dragging = false; });
+
+      slider.addEventListener('keydown', (e) => {
+        const current = Number(slider.getAttribute('aria-valuenow')) || 0;
+        let next = null;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = current + 5;
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = current - 5;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = 100;
+        if (next === null) return;
+        e.preventDefault();
+        setGoalPercent(item, next, true);
+      });
+    });
+
+    // ---- Rotating quote (random on load, no external calls) ----
+    const quotes = [
+      ['"Slow is smooth, and smooth is fast."', '— Unknown'],
+      ['"What you do every day matters more than what you do once in a while."', '— Gretchen Rubin'],
+      ['"Discipline is choosing between what you want now and what you want most."', '— Abraham Lincoln'],
+      ['"Small daily improvements are the key to staggering long-term results."', '— James Clear']
+    ];
+    const [q, a] = quotes[Math.floor(Math.random() * quotes.length)];
+    document.getElementById('quote-text').textContent = q;
+    document.getElementById('quote-author').textContent = a;
+  </script>
+</body>
+</html>
