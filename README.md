@@ -8,9 +8,11 @@ Open `index.html` to browse available dashboards.
 
 Every category is the same underlying personal "life OS" dashboard — daily greeting, mood check-in, habit tracker, goal progress, weekly focus, and a motivational quote — reskinned several different ways. Pick a category, then pick a design within it.
 
-- **[3D Dashboard](dashboards/3d-dashboard/index.html)** — soft, pillowy, dimensional materials, with floating gradient spheres and layered material-edge shadows for real depth. 6 designs: Warm Neumorphic, Deep Space Console, Holographic Iridescent, Brushed Metal Console, Gummy Toy, Clay Studio.
-- **[Glassmorphic](dashboards/glassmorphic/index.html)** — frosted, translucent layers over gradient backdrops. 5 designs: Daylight Glass, Obsidian Glass, Aurora Glass, Amber Glass, Frost Glass.
-- **[Editorial Minimal](dashboards/editorial-minimal/index.html)** — typographic, high-contrast, print-inspired layouts. 5 designs: Swiss Grid, Broadsheet, Brutalist Type, Runway, Ledger.
+- **[3D Dashboard](dashboards/3d-dashboard/index.html)** — molded, tactile materials with layered material-edge shadows for real depth (no floating decorative spheres). 3 designs: Warm Clay, Frosted Glass (warm gradient), Monochrome Plaster.
+- **[Glassmorphic](dashboards/glassmorphic/index.html)** — frosted, translucent layers over gradient backdrops. 3 designs: Serene Frost, Iridescent Chips, Multi-Tint Glass.
+- **[Editorial Minimal](dashboards/editorial-minimal/index.html)** — typographic, high-contrast, print-inspired layouts. 3 designs: Bone & Black, Oat Milk Quiet, Index Poster.
+
+Each category's designs were built from concrete design specs (exact palettes, shadow/blur recipes) derived from studying real reference images rather than generic assumptions.
 
 ## Adding a new design to a category
 
