@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iridescent Chips — Glassmorphic | BLOOM</title>
+<meta name="description" content="A playful, light-neutral glassmorphic personal dashboard with holographic iridescent gradient accents. Frosted white glass over soft pastel light bloom. Single-file, dependency-free, fully offline.">
+<meta property="og:title" content="Iridescent Chips — Glassmorphic | BLOOM">
+<meta property="og:description" content="Playful light-neutral frosted glass with holographic iridescent accents — a single dependency-free HTML/CSS/JS dashboard.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23F3B8D8%22%2F%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%23A8C8F0%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23B8E8D0%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%228%22%20y%3D%228%22%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22%2F%3E%3C%2Fsvg%3E">
+<style>
+  /* ---- Self-hosted Inter — no network dependency ---- */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-normal.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Inter';
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../../fonts/inter-italic.woff2') format('woff2');
+  }
+
+  :root {
+    --bg: #E8EAF0;
+    --text: #3A3A44;
+    --text-muted: #5E5E68;
+    --text-faint: #66666F;
+    --glass: rgba(255, 255, 255, 0.40);
+    --glass-strong: rgba(255, 255, 255, 0.62);
+    --glass-border: rgba(255, 255, 255, 0.65);
+    --glass-shadow: 0 6px 24px rgba(120, 110, 160, 0.14);
+    --rim: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    --irid: linear-gradient(120deg, #F3B8D8, #C3B8F0, #A8C8F0, #B8E8D0);
+    --irid-soft: linear-gradient(120deg, #F9DCEC, #E1DBF8, #D3E2F8, #DBF4E8);
+    --focus: #6C6AD8;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { overflow-x: hidden; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    position: relative;
+    padding: 28px 20px 88px;
+  }
+
+  /* ---- Ambient pastel light bloom (soft, never discrete circles) ---- */
+  .bloom {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .bloom span {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.55;
+  }
+  .bloom .b1 { width: 46vw; height: 46vw; top: -12%; left: -8%;
+    background: radial-gradient(circle, #F3D0E4 0%, rgba(243,208,228,0) 68%); }
+  .bloom .b2 { width: 40vw; height: 40vw; top: 8%; right: -10%;
+    background: radial-gradient(circle, #D8CFF2 0%, rgba(216,207,242,0) 68%); }
+  .bloom .b3 { width: 44vw; height: 44vw; bottom: -14%; left: 12%;
+    background: radial-gradient(circle, #CBDDF5 0%, rgba(203,221,245,0) 68%); }
+  .bloom .b4 { width: 34vw; height: 34vw; bottom: 2%; right: 4%;
+    background: radial-gradient(circle, #CFEBDD 0%, rgba(207,235,221,0) 68%); }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1040px;
+    margin: 0 auto;
+  }
+
+  a.back-link {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 24px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    backdrop-filter: blur(12px) saturate(160%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--rim);
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+  a.back-link:hover { color: var(--text); transform: translateY(-1px); }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  /* ---- Glass panel ---- */
+  .glass {
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow), var(--rim);
+    border-radius: 32px;
+  }
+
+  /* ---- Header / greeting ---- */
+  .hero {
+    padding: 30px 32px;
+    margin-bottom: 22px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 28px;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .hero .eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0 0 8px;
+  }
+  .hero h1 {
+    margin: 0 0 6px;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  .hero h1 .grad {
+    background: var(--irid);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero .subcopy {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.5;
+    max-width: 42ch;
+  }
+  .datechip {
+    text-align: center;
+    padding: 14px 20px;
+    border-radius: 20px;
+    background: var(--glass-strong);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--rim);
+    min-width: 96px;
+  }
+  .datechip .day {
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .datechip .wd {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* ---- Layout grid ---- */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+  .col { display: flex; flex-direction: column; gap: 22px; }
+  .span-2 { grid-column: 1 / -1; }
+
+  .card { padding: 26px 28px; }
+  .card > h2 {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .card > .card-sub {
+    margin: 0 0 20px;
+    font-size: 13px;
+    color: var(--text-faint);
+  }
+
+  /* ---- Mood check-in ---- */
+  .moods {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+  .mood {
+    appearance: none;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-strong);
+    border-radius: 20px;
+    padding: 14px 6px 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-family: inherit;
+    box-shadow: var(--rim);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  }
+  .mood:hover { transform: translateY(-2px); }
+  .mood .aura {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    line-height: 1;
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.15) 70%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
+    transition: background 0.18s ease, box-shadow 0.18s ease;
+  }
+  .mood .label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .mood[aria-pressed="true"] {
+    background: var(--glass);
+    color: var(--text);
+    box-shadow: var(--rim), 0 6px 18px rgba(120,110,160,0.22);
+    border-color: rgba(255,255,255,0.85);
+  }
+  .mood[aria-pressed="true"] .aura {
+    background: var(--irid);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.7), 0 4px 12px rgba(150,130,200,0.35);
+  }
+  .mood[aria-pressed="true"] .label { font-weight: 700; }
+
+  /* ---- Habit tracker ---- */
+  .habit {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 0;
+  }
+  .habit + .habit { border-top: 1px solid rgba(120,110,160,0.12); }
+  .habit .hname {
+    flex: 0 0 82px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .habit .hcount {
+    flex: 0 0 auto;
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .days {
+    display: flex;
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+  .day {
+    appearance: none;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 14px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.30);
+    cursor: pointer;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: var(--rim);
+    color: var(--text);
+  }
+  .day:hover { transform: translateY(-2px); }
+  .day .dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(120,110,160,0.16);
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .day[aria-pressed="true"] {
+    background: var(--glass-strong);
+    box-shadow: var(--rim), 0 4px 12px rgba(150,130,200,0.22);
+    border-color: rgba(255,255,255,0.85);
+  }
+  .day[aria-pressed="true"] .dot {
+    background: var(--irid);
+    transform: scale(1.25);
+    box-shadow: 0 2px 6px rgba(150,130,200,0.4);
+  }
+  @media (max-width: 560px) {
+    .habit { flex-wrap: wrap; row-gap: 8px; }
+    .habit .hname { flex: 1 1 auto; }
+    .habit .hcount { margin-left: auto; }
+    .days { flex: 1 1 100%; justify-content: space-between; }
+  }
+
+  /* ---- Goal sliders ---- */
+  .goal { margin-bottom: 22px; }
+  .goal:last-child { margin-bottom: 0; }
+  .goal .grow {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .goal .glabel { font-size: 14px; font-weight: 600; }
+  .goal .gval {
+    font-size: 15px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+  .slider {
+    position: relative;
+    height: 20px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.35);
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 3px rgba(120,110,160,0.18);
+    cursor: pointer;
+    touch-action: none;
+  }
+  .slider .fill {
+    position: absolute;
+    inset: 2px;
+    right: auto;
+    border-radius: 999px;
+    background: var(--irid);
+    box-shadow: 0 1px 4px rgba(150,130,200,0.35);
+    min-width: 16px;
+  }
+  .slider .thumb {
+    position: absolute;
+    top: 50%;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid rgba(255,255,255,0.9);
+    box-shadow: 0 3px 8px rgba(120,110,160,0.35), inset 0 0 0 4px rgba(255,255,255,0.6);
+    transform: translate(-50%, -50%);
+    transition: box-shadow 0.15s ease;
+  }
+  .slider .thumb::after {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border-radius: 50%;
+    background: var(--irid);
+  }
+  .slider:focus-visible { outline: none; }
+  .slider:focus-visible .thumb {
+    box-shadow: 0 3px 8px rgba(120,110,160,0.35), inset 0 0 0 4px rgba(255,255,255,0.6), 0 0 0 3px var(--focus);
+  }
+
+  /* ---- Weekly focus + quote ---- */
+  .focus h3 {
+    margin: 0 0 10px;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .focus p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .focus .pill {
+    display: inline-block;
+    margin-bottom: 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--irid-soft);
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: var(--rim);
+  }
+
+  .quote {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .quote .mark {
+    font-size: 46px;
+    line-height: 0.6;
+    font-weight: 800;
+    background: var(--irid);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 10px;
+  }
+  .quote blockquote {
+    margin: 0 0 12px;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 1.5;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .quote .attr {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+  }
+
+  /* ---- Primary CTA ---- */
+  .cta-row { margin-top: 22px; }
+  .cta {
+    appearance: none;
+    font-family: inherit;
+    cursor: pointer;
+    width: 100%;
+    padding: 16px 24px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.7);
+    background: var(--irid);
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    box-shadow: 0 6px 18px rgba(150,130,200,0.28), var(--rim);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .cta:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(150,130,200,0.34), var(--rim); }
+  .cta:active { transform: translateY(0); }
+
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; }
+    .hero { padding: 24px; }
+    .hero h1 { font-size: 26px; }
+  }
+  @media (max-width: 480px) {
+    body { padding: 24px 12px 80px; }
+    .card { padding: 22px 14px; }
+    .hero { padding: 22px 16px; }
+    .moods { gap: 7px; }
+    .days { gap: 2px; }
+    .day { width: 44px; min-width: 44px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.001ms !important;
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="bloom" aria-hidden="true">
+    <span class="b1"></span><span class="b2"></span><span class="b3"></span><span class="b4"></span>
+  </div>
+
+  <div class="wrap">
+    <a class="back-link" href="index.html">&larr; All Glassmorphic designs</a>
+
+    <!-- Hero / greeting -->
+    <header class="glass hero">
+      <div>
+        <p class="eyebrow" id="greeting">Good Morning</p>
+        <h1>Welcome back, <span class="grad">Ellery</span></h1>
+        <p class="subcopy">Your day, catching the light. Tap a few chips and watch them shimmer.</p>
+      </div>
+      <div class="datechip">
+        <span class="day" id="dateDay">00</span>
+        <span class="wd" id="dateWd">Day</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <div class="col">
+        <!-- Mood -->
+        <section class="glass card" aria-labelledby="mood-h">
+          <h2 id="mood-h">Mood check-in</h2>
+          <p class="card-sub">How are you feeling right now?</p>
+          <div class="moods" role="group" aria-label="Select your mood" id="moods">
+            <button type="button" class="mood" data-mood="Low" aria-pressed="false">
+              <span class="aura" aria-hidden="true">😔</span><span class="label">Low</span>
+            </button>
+            <button type="button" class="mood" data-mood="Flat" aria-pressed="false">
+              <span class="aura" aria-hidden="true">😐</span><span class="label">Flat</span>
+            </button>
+            <button type="button" class="mood" data-mood="Okay" aria-pressed="true">
+              <span class="aura" aria-hidden="true">🙂</span><span class="label">Okay</span>
+            </button>
+            <button type="button" class="mood" data-mood="Good" aria-pressed="false">
+              <span class="aura" aria-hidden="true">😄</span><span class="label">Good</span>
+            </button>
+            <button type="button" class="mood" data-mood="Great" aria-pressed="false">
+              <span class="aura" aria-hidden="true">🤩</span><span class="label">Great</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Goals -->
+        <section class="glass card" aria-labelledby="goals-h">
+          <h2 id="goals-h">Goal progress</h2>
+          <p class="card-sub">Drag, click, or use arrow keys to set.</p>
+          <div id="goals"></div>
+        </section>
+      </div>
+
+      <div class="col">
+        <!-- Habits -->
+        <section class="glass card" aria-labelledby="habits-h">
+          <h2 id="habits-h">Habit tracker</h2>
+          <p class="card-sub">Seven days. Tap a chip to light it up.</p>
+          <div id="habits"></div>
+        </section>
+      </div>
+
+      <!-- Weekly focus -->
+      <section class="glass card focus span-2" aria-labelledby="focus-h">
+        <span class="pill">This week</span>
+        <h3 id="focus-h">This week's focus</h3>
+        <p>Protect your mornings. Block 90 minutes before 9am for deep, uninterrupted work — no notifications, no meetings.</p>
+        <div class="cta-row">
+          <button type="button" class="cta" id="cta">Lock in my focus block</button>
+        </div>
+      </section>
+
+      <!-- Quote -->
+      <section class="glass card quote span-2" aria-label="Motivational quote">
+        <div class="mark" aria-hidden="true">&ldquo;</div>
+        <blockquote id="quoteText"></blockquote>
+        <div class="attr" id="quoteAttr"></div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var HABIT_KEY = "bloom-glassmorphic-iridescent-chips-habits";
+    var GOAL_KEY = "bloom-glassmorphic-iridescent-chips-goals";
+
+    /* ---------- Greeting + date ---------- */
+    var now = new Date();
+    var hr = now.getHours();
+    var greet = hr < 12 ? "Good Morning" : (hr < 18 ? "Good Afternoon" : "Good Evening");
+    document.getElementById("greeting").textContent = greet;
+
+    var weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    document.getElementById("dateDay").textContent = String(now.getDate()).padStart(2, "0");
+    document.getElementById("dateWd").textContent = weekdays[now.getDay()];
+
+    /* ---------- Quote ---------- */
+    var quotes = [
+      { t: "Slow is smooth, and smooth is fast.", a: "Unknown" },
+      { t: "What you do every day matters more than what you do once in a while.", a: "Gretchen Rubin" },
+      { t: "Discipline is choosing between what you want now and what you want most.", a: "Abraham Lincoln" },
+      { t: "Small daily improvements are the key to staggering long-term results.", a: "James Clear" }
+    ];
+    var q = quotes[Math.floor(Math.random() * quotes.length)];
+    document.getElementById("quoteText").textContent = "“" + q.t + "”";
+    document.getElementById("quoteAttr").textContent = "— " + q.a;
+
+    /* ---------- Mood ---------- */
+    var moodBtns = Array.prototype.slice.call(document.querySelectorAll(".mood"));
+    moodBtns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        moodBtns.forEach(function (b) { b.setAttribute("aria-pressed", "false"); });
+        btn.setAttribute("aria-pressed", "true");
+      });
+    });
+
+    /* ---------- Habits ---------- */
+    var HABIT_DEFAULTS = [
+      { name: "Meditate", days: [true, true, true, true, false, false, false] },
+      { name: "Read",     days: [true, true, false, true, true, false, false] },
+      { name: "Move",     days: [true, false, true, false, true, false, false] },
+      { name: "Hydrate",  days: [true, true, true, true, true, false, false] },
+      { name: "Journal",  days: [false, true, false, true, false, false, false] }
+    ];
+    var dayLabels = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+    function loadHabits() {
+      try {
+        var raw = JSON.parse(localStorage.getItem(HABIT_KEY));
+        if (Array.isArray(raw) && raw.length === HABIT_DEFAULTS.length) {
+          return raw.map(function (h, i) {
+            var d = (h && Array.isArray(h.days) && h.days.length === 7)
+              ? h.days.map(Boolean) : HABIT_DEFAULTS[i].days.slice();
+            return { name: HABIT_DEFAULTS[i].name, days: d };
+          });
+        }
+      } catch (e) {}
+      return HABIT_DEFAULTS.map(function (h) { return { name: h.name, days: h.days.slice() }; });
+    }
+
+    var habits = loadHabits();
+    function saveHabits() {
+      try { localStorage.setItem(HABIT_KEY, JSON.stringify(habits)); } catch (e) {}
+    }
+
+    var habitsEl = document.getElementById("habits");
+    habits.forEach(function (habit, hi) {
+      var row = document.createElement("div");
+      row.className = "habit";
+
+      var name = document.createElement("span");
+      name.className = "hname";
+      name.textContent = habit.name;
+      row.appendChild(name);
+
+      var days = document.createElement("div");
+      days.className = "days";
+
+      var count = document.createElement("span");
+      count.className = "hcount";
+
+      function refreshCount() {
+        var n = habit.days.filter(Boolean).length;
+        count.textContent = n + "/7";
+      }
+
+      habit.days.forEach(function (on, di) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "day";
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+        b.setAttribute("aria-label", habit.name + " — " + dayLabels[di] + (on ? " (done)" : " (not done)"));
+        var dot = document.createElement("span");
+        dot.className = "dot";
+        b.appendChild(dot);
+        b.addEventListener("click", function () {
+          habit.days[di] = !habit.days[di];
+          b.setAttribute("aria-pressed", habit.days[di] ? "true" : "false");
+          b.setAttribute("aria-label", habit.name + " — " + dayLabels[di] + (habit.days[di] ? " (done)" : " (not done)"));
+          refreshCount();
+          saveHabits();
+        });
+        days.appendChild(b);
+      });
+
+      row.appendChild(days);
+      row.appendChild(count);
+      refreshCount();
+      habitsEl.appendChild(row);
+    });
+
+    /* ---------- Goals (sliders) ---------- */
+    var GOAL_DEFAULTS = [
+      { label: "Read 20 books", value: 65 },
+      { label: "Save $10,000", value: 40 },
+      { label: "Run 500 miles", value: 82 }
+    ];
+
+    function loadGoals() {
+      try {
+        var raw = JSON.parse(localStorage.getItem(GOAL_KEY));
+        if (Array.isArray(raw) && raw.length === GOAL_DEFAULTS.length) {
+          return raw.map(function (g, i) {
+            var v = (g && typeof g.value === "number" && isFinite(g.value))
+              ? Math.min(100, Math.max(0, Math.round(g.value))) : GOAL_DEFAULTS[i].value;
+            return { label: GOAL_DEFAULTS[i].label, value: v };
+          });
+        }
+      } catch (e) {}
+      return GOAL_DEFAULTS.map(function (g) { return { label: g.label, value: g.value }; });
+    }
+
+    var goals = loadGoals();
+    function saveGoals() {
+      try { localStorage.setItem(GOAL_KEY, JSON.stringify(goals)); } catch (e) {}
+    }
+
+    var goalsEl = document.getElementById("goals");
+    goals.forEach(function (goal, gi) {
+      var block = document.createElement("div");
+      block.className = "goal";
+
+      var head = document.createElement("div");
+      head.className = "grow";
+      var lbl = document.createElement("span");
+      lbl.className = "glabel";
+      lbl.textContent = goal.label;
+      var val = document.createElement("span");
+      val.className = "gval";
+      head.appendChild(lbl);
+      head.appendChild(val);
+
+      var slider = document.createElement("div");
+      slider.className = "slider";
+      slider.tabIndex = 0;
+      slider.setAttribute("role", "slider");
+      slider.setAttribute("aria-label", goal.label);
+      slider.setAttribute("aria-valuemin", "0");
+      slider.setAttribute("aria-valuemax", "100");
+
+      var fill = document.createElement("div");
+      fill.className = "fill";
+      var thumb = document.createElement("div");
+      thumb.className = "thumb";
+      slider.appendChild(fill);
+      slider.appendChild(thumb);
+
+      function render() {
+        var v = goal.value;
+        val.textContent = v + "%";
+        fill.style.width = v + "%";
+        thumb.style.left = v + "%";
+        slider.setAttribute("aria-valuenow", String(v));
+        slider.setAttribute("aria-valuetext", v + " percent");
+      }
+
+      function setValue(v, persist) {
+        v = Math.min(100, Math.max(0, Math.round(v)));
+        if (v !== goal.value) {
+          goal.value = v;
+          render();
+          if (persist) saveGoals();
+        } else {
+          render();
+        }
+      }
+
+      function valueFromEvent(clientX) {
+        var rect = slider.getBoundingClientRect();
+        var pct = (clientX - rect.left) / rect.width * 100;
+        return pct;
+      }
+
+      var dragging = false;
+      slider.addEventListener("pointerdown", function (e) {
+        dragging = true;
+        slider.setPointerCapture(e.pointerId);
+        slider.focus();
+        setValue(valueFromEvent(e.clientX), false);
+        e.preventDefault();
+      });
+      slider.addEventListener("pointermove", function (e) {
+        if (!dragging) return;
+        setValue(valueFromEvent(e.clientX), false);
+      });
+      slider.addEventListener("pointerup", function (e) {
+        if (!dragging) return;
+        dragging = false;
+        try { slider.releasePointerCapture(e.pointerId); } catch (err) {}
+        saveGoals();
+      });
+      slider.addEventListener("keydown", function (e) {
+        var v = goal.value, handled = true;
+        switch (e.key) {
+          case "ArrowLeft":
+          case "ArrowDown": setValue(v - 5, true); break;
+          case "ArrowRight":
+          case "ArrowUp": setValue(v + 5, true); break;
+          case "Home": setValue(0, true); break;
+          case "End": setValue(100, true); break;
+          case "PageDown": setValue(v - 10, true); break;
+          case "PageUp": setValue(v + 10, true); break;
+          default: handled = false;
+        }
+        if (handled) e.preventDefault();
+      });
+
+      block.appendChild(head);
+      block.appendChild(slider);
+      goalsEl.appendChild(block);
+      render();
+    });
+
+    /* ---------- CTA (playful toggle) ---------- */
+    var cta = document.getElementById("cta");
+    var locked = false;
+    cta.addEventListener("click", function () {
+      locked = !locked;
+      cta.textContent = locked ? "Focus block locked ✨" : "Lock in my focus block";
+    });
+  })();
+  </script>
+</body>
+</html>
